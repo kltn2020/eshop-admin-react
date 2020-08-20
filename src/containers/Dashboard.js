@@ -145,78 +145,84 @@ export default function Dashboard() {
                 <Typography variant="h6">Statistics</Typography>
                 {openStatisticCollapse ? <ExpandLess /> : <ExpandMore />}
               </ButtonBase>
-              <Collapse in={openStatisticCollapse} timeout="auto" unmountOnExit>
-                <Paper className={classes.padding} elevation={4}>
-                  <Grid container spacing={3}>
-                    {/* New orders */}
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Alert
-                        icon={false}
-                        variant="filled"
-                        severity="info"
-                        className={classes.statictisPaper}
-                      >
-                        <Typography variant="h4">
-                          {dashboard.items.payments || 0}
-                        </Typography>
-                        <Typography variant="h6">Orders</Typography>
-                        <Button component={Link} to="/orders">
-                          More info {">"}
-                        </Button>
-                      </Alert>
+              {dashboard && dashboard.items && (
+                <Collapse
+                  in={openStatisticCollapse}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <Paper className={classes.padding} elevation={4}>
+                    <Grid container spacing={3}>
+                      {/* New orders */}
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Alert
+                          icon={false}
+                          variant="filled"
+                          severity="info"
+                          className={classes.statictisPaper}
+                        >
+                          <Typography variant="h4">
+                            {dashboard.items.payments || 0}
+                          </Typography>
+                          <Typography variant="h6">Orders</Typography>
+                          <Button component={Link} to="/orders">
+                            More info {">"}
+                          </Button>
+                        </Alert>
+                      </Grid>
+                      {/* Products */}
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Alert
+                          icon={false}
+                          variant="filled"
+                          severity="warning"
+                          className={classes.statictisPaper}
+                        >
+                          <Typography variant="h4">
+                            {dashboard.items.products || 0}
+                          </Typography>
+                          <Typography variant="h6">Products</Typography>
+                          <Button component={Link} to="/products">
+                            More info {">"}
+                          </Button>
+                        </Alert>
+                      </Grid>
+                      {/* Users */}
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Alert
+                          icon={false}
+                          variant="filled"
+                          severity="success"
+                          className={classes.statictisPaper}
+                        >
+                          <Typography variant="h4">
+                            {dashboard.items.users || 0}
+                          </Typography>
+                          <Typography variant="h6">Users</Typography>
+                          <Button component={Link} to="/users">
+                            More info {">"}
+                          </Button>
+                        </Alert>
+                      </Grid>
+                      {/* Low stock */}
+                      <Grid item xs={12} sm={6} md={3}>
+                        <Alert
+                          icon={false}
+                          variant="filled"
+                          severity="error"
+                          className={classes.statictisPaper}
+                        >
+                          <Typography variant="h4">0</Typography>
+                          <Typography variant="h6">Total</Typography>
+                          <Button component={Link} to="/users">
+                            More info {">"}
+                          </Button>
+                        </Alert>
+                      </Grid>
                     </Grid>
-                    {/* Products */}
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Alert
-                        icon={false}
-                        variant="filled"
-                        severity="warning"
-                        className={classes.statictisPaper}
-                      >
-                        <Typography variant="h4">
-                          {dashboard.items.products || 0}
-                        </Typography>
-                        <Typography variant="h6">Products</Typography>
-                        <Button component={Link} to="/products">
-                          More info {">"}
-                        </Button>
-                      </Alert>
-                    </Grid>
-                    {/* Users */}
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Alert
-                        icon={false}
-                        variant="filled"
-                        severity="success"
-                        className={classes.statictisPaper}
-                      >
-                        <Typography variant="h4">
-                          {dashboard.items.users || 0}
-                        </Typography>
-                        <Typography variant="h6">Users</Typography>
-                        <Button component={Link} to="/users">
-                          More info {">"}
-                        </Button>
-                      </Alert>
-                    </Grid>
-                    {/* Low stock */}
-                    <Grid item xs={12} sm={6} md={3}>
-                      <Alert
-                        icon={false}
-                        variant="filled"
-                        severity="error"
-                        className={classes.statictisPaper}
-                      >
-                        <Typography variant="h4">0</Typography>
-                        <Typography variant="h6">Total</Typography>
-                        <Button component={Link} to="/users">
-                          More info {">"}
-                        </Button>
-                      </Alert>
-                    </Grid>
-                  </Grid>
-                </Paper>
-              </Collapse>
+                  </Paper>
+                </Collapse>
+              )}
             </Grid>
 
             {/* Order and user chart*/}
@@ -240,7 +246,7 @@ export default function Dashboard() {
                     style={{ height: 300 }}
                     elevation={4}
                   >
-                    <OrdersChart />
+                    {/* <OrdersChart /> */}
                   </Paper>
                 </Collapse>
               </Grid>
@@ -264,7 +270,7 @@ export default function Dashboard() {
                     style={{ height: 300 }}
                     elevation={4}
                   >
-                    <UsersChart />
+                    {/* <UsersChart /> */}
                   </Paper>
                 </Collapse>
               </Grid>
@@ -299,7 +305,7 @@ export default function Dashboard() {
                     >
                       View all orders
                     </Button>
-                    <TableContainer className={classes.tableContainer}>
+                    {/* <TableContainer className={classes.tableContainer}>
                       <Table
                         className={classes.table}
                         aria-label="simple table"
@@ -361,7 +367,7 @@ export default function Dashboard() {
                           ))}
                         </TableBody>
                       </Table>
-                    </TableContainer>
+                    </TableContainer> */}
                   </Paper>
                 </Collapse>
               </Grid>

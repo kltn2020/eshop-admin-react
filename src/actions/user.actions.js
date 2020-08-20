@@ -47,29 +47,11 @@ function login(user) {
     await userService.login(user).then(
       (data) => {
         dispatch(success(data));
-        dispatch(requestGetMe());
 
-        userService.getMe().then(
-          (user) => {
-            dispatch(successGetMe(user));
-          },
-          (error) => {
-            dispatch(failureGetMe(error));
-            //dispatch(alertActions.error(error.toString()));
-          }
-        );
         history.push({ pathname: "/", state: 200 });
       },
       (error) => {
-        if (error.response && error.response.data) {
-          let errorkey = Object.keys(error.response.data)[0];
-
-          let errorValue = error.response.data[errorkey][0];
-
-          dispatch(failure(errorkey.toUpperCase() + ": " + errorValue));
-        } else {
-          dispatch(failure(error.toString()));
-        }
+        dispatch(failure(error));
       }
     );
   };
@@ -82,16 +64,6 @@ function login(user) {
   }
   function failure(error) {
     return { type: userConstants.LOGIN_FAILURE, error };
-  }
-
-  function requestGetMe() {
-    return { type: userConstants.GETME_REQUEST };
-  }
-  function successGetMe(user) {
-    return { type: userConstants.GETME_SUCCESS, user };
-  }
-  function failureGetMe(error) {
-    return { type: userConstants.GETME_FAILURE, error };
   }
 }
 

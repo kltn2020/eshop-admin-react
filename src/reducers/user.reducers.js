@@ -1,14 +1,12 @@
 import { userConstants } from "../constants";
 import setAuthToken from "../store/setAuthToken";
+import { parseJwt } from "../store";
 
 const initialState = {
   token: localStorage.getItem("token"),
-  loading: true,
-  isAuthenticated: false,
+  loading: false,
   items: [],
   item: null,
-  next: null,
-  previous: null,
   success: null,
   error: null,
 };
@@ -29,11 +27,12 @@ export function users(state = initialState, action) {
         ...state,
         loading: false,
         success: true,
-        isAuthenticated: true,
+        token: localStorage.getItem("token"),
+        userRole: parseJwt(action.data.token).role,
       };
     case userConstants.LOGIN_FAILURE:
       localStorage.removeItem("token");
-      return { ...state, error: action.error };
+      return { ...state, loading: false, error: action.error };
 
     case userConstants.REGISTER_REQUEST:
       return {
@@ -59,7 +58,6 @@ export function users(state = initialState, action) {
       return {
         ...state,
         token: null,
-        isAuthenticated: false,
         user: null,
       };
 
@@ -74,7 +72,7 @@ export function users(state = initialState, action) {
       return {
         ...state,
         loading: false,
-        isAuthenticated: true,
+
         user: action.user,
       };
     case userConstants.GETME_FAILURE:

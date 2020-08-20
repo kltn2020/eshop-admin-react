@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
@@ -15,6 +15,7 @@ import Paper from "@material-ui/core/Paper";
 
 //Custom Components
 import CustomAlert from "../components/Alert";
+import { history } from "../store";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -68,8 +69,14 @@ export default function Login() {
     dispatch(userActions.login(formData));
   };
 
+  //Check if authorized => redirect to dashboard
+  useEffect(() => {
+    if (localStorage.getItem("token")) history.push("/");
+  }, []);
+
   return (
     <Fragment>
+      {<CustomAlert loading={users.loading} />}
       {users.error && (
         <CustomAlert openError={true} messageError={users.error}></CustomAlert>
       )}

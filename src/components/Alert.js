@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import Alert from "@material-ui/lab/Alert";
 import Collapse from "@material-ui/core/Collapse";
+import LinearProgress from "@material-ui/core/LinearProgress";
 
 //Custom
 import { history } from "../store";
@@ -68,6 +69,9 @@ export default function CustomAlert(props) {
 
   return (
     <div className={classes.root}>
+      {/* Loading */}
+      {props.loading ? <LinearProgress color="secondary" /> : null}
+
       {/* Success Snackbar */}
       <Snackbar
         open={openSuccess}

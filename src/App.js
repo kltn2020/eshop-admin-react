@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Router, Route, Switch } from "react-router-dom";
 
 //Authority
@@ -10,6 +10,9 @@ import Dashboard from "./containers/Dashboard";
 import Login from "./containers/Login";
 import Register from "./containers/Register";
 import Setting from "./containers/Setting";
+//>>Product
+import ProductList from "./containers/Product/ProductList";
+import ProductAdd from "./containers/Product/ProductAdd";
 
 //Redux
 import { useSelector } from "react-redux";
@@ -35,6 +38,22 @@ const App = () => {
             <Route exact path="/register" component={Register}></Route>
 
             <AdminRoute exact path="/" component={Dashboard}></AdminRoute>
+            {/* Product */}
+            <AdminRoute
+              exact
+              path="/products"
+              component={ProductList}
+            ></AdminRoute>
+            <AdminRoute
+              exact
+              path="/products-add"
+              component={ProductAdd}
+            ></AdminRoute>
+            {/* <AdminRoute
+              exact
+              path="/products-edit/:id"
+              component={ProductEdit}
+            ></AdminRoute> */}
             <AdminRoute exact path="/setting" component={Setting}></AdminRoute>
           </Switch>
         </Router>

@@ -48,16 +48,18 @@ async function getMe() {
   const requestConfig = {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Token ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
   };
-  return await axios.get(`/api/auth/user`, requestConfig).then(handleResponse);
+  return await axios
+    .get(`/api/home/profile`, requestConfig)
+    .then(handleResponse);
 }
 
-async function logout() {
+function logout() {
   // remove user from local storage to log user out
   //await axios.post("/api/auth/logout/");
-  localStorage.removeItem("user");
+  return localStorage.removeItem("token");
 }
 
 async function getAll(url = null) {

@@ -9,7 +9,7 @@ const AdminRoute = ({ component: Component, user, ...rest }) => {
     <Route
       {...rest}
       render={(props) => {
-        if (!users.isAuthenticated && !users.loading) {
+        if (!localStorage.getItem("token") && !users.loading) {
           return <Redirect to="/login"></Redirect>;
         } else if (!users) {
           return <Redirect to="/login"></Redirect>;

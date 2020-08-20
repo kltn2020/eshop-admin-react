@@ -1,5 +1,8 @@
 import { combineReducers } from "redux";
 import { users } from "./user.reducers";
+import { products } from "./product.reducers";
+import { categories } from "./category.reducers";
+import { brands } from "./brand.reducers";
 
 //Theme
 import { themeConstants } from "../constants";
@@ -17,8 +20,11 @@ export function theme(state = { dark: false }, action) {
 }
 
 const rootReducer = combineReducers({
-  users,
   theme,
+  users,
+  products,
+  categories,
+  brands,
 });
 
 export default rootReducer;
