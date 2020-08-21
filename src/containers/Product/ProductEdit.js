@@ -21,20 +21,13 @@ import GridList from "@material-ui/core/GridList";
 import GridListTile from "@material-ui/core/GridListTile";
 import GridListTileBar from "@material-ui/core/GridListTileBar";
 
-// import { Editor } from "react-draft-wysiwyg";
-// import { ContentState, convertToRaw, EditorState } from "draft-js";
-// import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-// import htmlToDraft from "html-to-draftjs";
-// import draftToHtml from "draftjs-to-html";
-import { Editor } from "@tinymce/tinymce-react";
-
 //Components
 import AdminLayout from "../../components/Layout";
 import CustomAlert from "../../components/Alert";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { productActions, categoryActions } from "../../actions";
+import { productActions, categoryActions, brandActions } from "../../actions";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -91,6 +84,10 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paper,
     border: "1px solid #ddd",
   },
+  productSection: {
+    color: theme.palette.primary.main,
+    fontWeight: "bold",
+  },
 }));
 
 //Options
@@ -106,9 +103,12 @@ export default function ProductEdit(props) {
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
   const categories = useSelector((state) => state.categories);
+  const brands = useSelector((state) => state.brands);
+
   //>>Load all categories
   useEffect(() => {
-    dispatch(categoryActions.getAllNonPagination());
+    dispatch(categoryActions.getAll());
+    dispatch(brandActions.getAll());
   }, [dispatch]);
   //>>Load Product Edit
   useEffect(() => {
@@ -126,31 +126,8 @@ export default function ProductEdit(props) {
     setOpenSEOCollapse(!openSEOCollapse);
   };
 
-  //Editor
-  // const [editorState, setEditorState] = React.useState(
-  //   EditorState.createEmpty()
-  // );
-
-  // const onEditorStateChange = (editorState) => {
-  //   setEditorState(editorState);
-  // };
-
-  // //Save Editor to formData
-  // const onSaveContent = () => {
-  //   setFormData({
-  //     ...formData,
-  //     full_description: draftToHtml(
-  //       convertToRaw(editorState.getCurrentContent())
-  //     ),
-  //   });
-  // };
-
-  const handleTinyEditorChange = (content, editor) => {
-    setFormData({ ...formData, full_description: content });
-  };
-
   //Image
-  const [oldImage, setOldImage] = React.useState([{ images: [] }]);
+  //const [oldImage, setOldImage] = React.useState([{ images: [] }]);
   const [image, setImage] = React.useState([]);
   const [delImage, setDelImage] = React.useState([]);
 
@@ -171,37 +148,72 @@ export default function ProductEdit(props) {
 
   const onDeleteBtn = (e) => {
     setDelImage([...delImage, e.target.id * 1]);
-    setOldImage({
-      ...oldImage,
-      images: oldImage.images.filter((_image) => _image.id !== e.target.id * 1),
+    setFormData({
+      ...formData,
+      images: formData.images.filter((_image) => _image.id !== e.target.id * 1),
     });
   };
 
   //Main funtion
   const [formData, setFormData] = useState({
     sku: "",
-    title: "",
+    name: "",
     price: 0,
+    battery_capacity: "",
+    bluetooth: "",
+    camera: "",
+    cpu: "",
+    discount: "",
+    display: "",
+    display_resolution: "",
+    display_screen: "",
+    gpu: "",
+    material: "",
+    new_feature: "",
+    os: "",
+    ports: "",
+    ram: "",
+    size: "",
+    storage: "",
+    video: "",
+    weight: "",
+    wifi: "",
+    brand_id: 1,
+    category_id: 1,
     description: "",
-    active: true,
-    slug: "",
+    is_available: true,
+    images: [],
   });
 
-  const { sku, title, price, description, full_description, slug } = formData;
+  const {
+    sku,
+    name,
+    price,
+    battery_capacity,
+    bluetooth,
+    camera,
+    cpu,
+    discount,
+    display,
+    display_resolution,
+    display_screen,
+    gpu,
+    material,
+    new_feature,
+    os,
+    ports,
+    ram,
+    size,
+    storage,
+    video,
+    weight,
+    wifi,
+    description,
+  } = formData;
 
   //>>Put item to form data
   useEffect(() => {
-    setFormData({ ...products.item, images: [] });
-    setOldImage({ images: products.item.images });
-    // if (products.item.full_description) {
-    //   const contentBlock = htmlToDraft(products.item.full_description);
-    //   if (contentBlock) {
-    //     const contentState = ContentState.createFromBlockArray(
-    //       contentBlock.contentBlocks
-    //     );
-    //     setEditorState(EditorState.createWithContent(contentState));
-    //   }
-    // }
+    setFormData({ ...products.item });
   }, [products.item]);
 
   const onChange = (e) => {
@@ -210,12 +222,7 @@ export default function ProductEdit(props) {
 
   const onSubmit = () => {
     dispatch(
-      productActions.update(
-        props.match.params.id,
-        { ...formData, category: formData.category },
-        image,
-        delImage
-      )
+      productActions.update(props.match.params.id, formData, image, delImage)
     );
   };
 
@@ -238,6 +245,11 @@ export default function ProductEdit(props) {
         </Breadcrumbs>
 
         {/* Success & Error handling */}
+        {
+          <CustomAlert
+            loading={products.loading || brands.loading || categories.loading}
+          />
+        }
         {products.error && (
           <CustomAlert
             openError={true}
@@ -294,10 +306,10 @@ export default function ProductEdit(props) {
                         <div className={classes.gridListRoot}>
                           <GridList className={classes.gridList} cols={3.5}>
                             {/* Old Images */}
-                            {oldImage.images &&
-                              oldImage.images.map((item, index) => (
-                                <GridListTile key={item.id}>
-                                  <img src={item.image} alt={"No data"} />
+                            {formData.images &&
+                              formData.images.map((item, index) => (
+                                <GridListTile key={index}>
+                                  <img src={item.url} alt={"No data"} />
                                   <GridListTileBar
                                     title={item.id}
                                     actionIcon={
@@ -343,6 +355,16 @@ export default function ProductEdit(props) {
                       </Grid>
                     </Grid>
                   </Grid>
+                  {/* General */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <Typography
+                      className={classes.productSection}
+                      align="center"
+                      variant="h6"
+                    >
+                      General
+                    </Typography>
+                  </Grid>
                   {/* sku */}
                   <Grid item xs={12} sm={12} md={9}>
                     <TextField
@@ -361,10 +383,11 @@ export default function ProductEdit(props) {
                     <TextField
                       id="name-text"
                       fullWidth
+                      required
                       label="Product Name"
                       variant="outlined"
-                      value={title || ""}
-                      name="title"
+                      value={name || ""}
+                      name="name"
                       onChange={(e) => onChange(e)}
                       onKeyPress={(e) => keyPressed(e)}
                     />
@@ -377,13 +400,16 @@ export default function ProductEdit(props) {
                       options={categories.items}
                       value={
                         categories.items.find(
-                          (element) => element.id === formData.category
+                          (element) => element.id === formData.category_id
                         ) || null
                       }
                       onChange={(e, newValue) =>
-                        setFormData({ ...formData, category: newValue.id })
+                        setFormData({
+                          ...formData,
+                          category_id: newValue.id,
+                        })
                       }
-                      getOptionLabel={(option) => option.title}
+                      getOptionLabel={(option) => option.name}
                       renderInput={(params) => (
                         <TextField
                           {...params}
@@ -393,44 +419,78 @@ export default function ProductEdit(props) {
                       )}
                     />
                   </Grid>
-                  {/* short Description */}
+                  {/* brand */}
                   <Grid item xs={12} sm={12} md={9}>
-                    <TextField
-                      id="sdescription-text"
+                    <Autocomplete
+                      id="combo-box-brand"
                       fullWidth
-                      label="Short Description"
-                      variant="outlined"
-                      value={description || ""}
-                      name="description"
-                      onChange={(e) => onChange(e)}
-                      onKeyPress={(e) => keyPressed(e)}
+                      options={brands.items}
+                      value={
+                        brands.items.find(
+                          (element) => element.id === formData.brand_id
+                        ) || null
+                      }
+                      onChange={(e, newValue) =>
+                        setFormData({
+                          ...formData,
+                          brand_id: newValue.id,
+                        })
+                      }
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Brand"
+                          variant="outlined"
+                        />
+                      )}
                     />
                   </Grid>
-                  {/* price */}
-                  <Grid item xs={12} sm={12} md={9}>
-                    <TextField
-                      id="price-text"
-                      type="number"
-                      fullWidth
-                      label="Price"
-                      variant="outlined"
-                      value={price || ""}
-                      name="price"
-                      onChange={(e) => onChange(e)}
-                      onKeyPress={(e) => keyPressed(e)}
-                    />
+                  {/* price & discount */}
+                  <Grid item container xs={12} sm={12} md={9} spacing={2}>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        id="price-text"
+                        type="number"
+                        fullWidth
+                        label="Price"
+                        variant="outlined"
+                        value={price || 0}
+                        name="price"
+                        onChange={(e) => onChange(e)}
+                        onKeyPress={(e) => keyPressed(e)}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <TextField
+                        id="discount-text"
+                        type="number"
+                        fullWidth
+                        label="Discount"
+                        variant="outlined"
+                        value={discount || 0}
+                        name="discount"
+                        onChange={(e) => onChange(e)}
+                        onKeyPress={(e) => keyPressed(e)}
+                      />
+                    </Grid>
                   </Grid>
-                  {/* active */}
+                  {/* available */}
                   <Grid item xs={12} sm={12} md={9}>
                     <Autocomplete
                       id="combo-box-active"
                       fullWidth
                       options={statusOption}
                       value={
-                        formData.active ? statusOption[0] : statusOption[1]
+                        formData.is_available
+                          ? statusOption[0]
+                          : statusOption[1]
                       }
                       onChange={(e, newValue) =>
-                        setFormData({ ...formData, active: newValue.value })
+                        setFormData({
+                          ...formData,
+                          is_available: newValue.value,
+                        })
                       }
                       getOptionLabel={(option) => option.title}
                       renderInput={(params) => (
@@ -442,119 +502,301 @@ export default function ProductEdit(props) {
                       )}
                     />
                   </Grid>
-                  {/* content
+                  {/* description */}
                   <Grid item xs={12} sm={12} md={9}>
-                    <Editor
-                      editorClassName={classes.richEditor}
-                      wrapperClassName="demo-wrapper"
-                      toolbar={{
-                        inline: { inDropdown: true },
-                        list: { inDropdown: true },
-                        textAlign: { inDropdown: true },
-                        link: { inDropdown: true },
-                        history: { inDropdown: true },
-
-                        image: {
-                          uploadCallback: uploadImageCallBack,
-                          alt: { present: true, mandatory: true },
-                        },
-                      }}
-                      editorState={editorState}
-                      onEditorStateChange={onEditorStateChange}
+                    <TextField
+                      id="description-text"
+                      fullWidth
+                      label="Description"
+                      variant="outlined"
+                      value={description || ""}
+                      name="description"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
                     />
                   </Grid>
-                  {/* save btn content */}
-                  {/* <Grid item xs={12} sm={12} md={9}>
-                    <Button
-                      onClick={onSaveContent}
-                      variant="contained"
-                      color="secondary"
-                    >
-                      Save Content
-                    </Button>
-                  </Grid> */}
-                  {/* tiny editor */}
+                  {/* Configurations */}
                   <Grid item xs={12} sm={12} md={9}>
-                    <Editor
-                      initialValue={full_description}
-                      init={{
-                        height: "80vh",
-                        width: "100%",
-                        selector: "textarea",
-                        menubar: false,
-                        plugins: [
-                          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                          "searchreplace wordcount visualblocks visualchars code fullscreen",
-                          "insertdatetime media nonbreaking save table directionality",
-                          "emoticons template paste textpattern imagetools codesample toc",
-                        ],
-                        toolbar1:
-                          "undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image media",
-                        toolbar2:
-                          "print preview media | forecolor backcolor emoticons | codesample",
-                        templates: [
-                          { title: "Test template 1", content: "Test 1" },
-                          { title: "Test template 2", content: "Test 2" },
-                        ],
-
-                        images_upload_url: "/",
-                        images_upload_handler: function (
-                          blobInfo,
-                          success,
-                          failure,
-                          progress
-                        ) {
-                          var xhr, formData;
-
-                          xhr = new XMLHttpRequest();
-                          xhr.withCredentials = false;
-                          xhr.open("POST", "/api/blog_images/");
-
-                          xhr.upload.onprogress = function (e) {
-                            progress((e.loaded / e.total) * 100);
-                          };
-
-                          xhr.onload = function () {
-                            var json;
-
-                            if (xhr.status < 200 || xhr.status >= 300) {
-                              failure("HTTP Error: " + xhr.status);
-                              return;
-                            }
-
-                            json = JSON.parse(xhr.responseText);
-
-                            if (
-                              !json ||
-                              typeof json.data.location != "string"
-                            ) {
-                              failure("Invalid JSON: " + xhr.responseText);
-                              return;
-                            }
-
-                            success(json.data.location);
-                          };
-
-                          xhr.onerror = function () {
-                            failure(
-                              "Image upload failed due to a XHR Transport error. Code: " +
-                                xhr.status
-                            );
-                          };
-
-                          formData = new FormData();
-                          formData.append(
-                            "image",
-                            blobInfo.blob(),
-                            blobInfo.filename()
-                          );
-
-                          xhr.send(formData);
-                        },
-                        relative_urls: false,
-                        automatic_uploads: false,
-                      }}
-                      onEditorChange={handleTinyEditorChange}
+                    <Typography
+                      className={classes.productSection}
+                      align="center"
+                      variant="h6"
+                    >
+                      Configurations
+                    </Typography>
+                  </Grid>
+                  {/* CPU */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="cpu-text"
+                      fullWidth
+                      label="CPU"
+                      variant="outlined"
+                      value={cpu || ""}
+                      name="cpu"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* GPU */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="gpu-text"
+                      fullWidth
+                      label="GPU"
+                      variant="outlined"
+                      value={gpu || ""}
+                      name="gpu"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* OS */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="os-text"
+                      fullWidth
+                      label="OS"
+                      variant="outlined"
+                      value={os || ""}
+                      name="os"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* RAM */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="ram-text"
+                      fullWidth
+                      label="RAM"
+                      variant="outlined"
+                      value={ram || ""}
+                      name="ram"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Storage */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="storage-text"
+                      fullWidth
+                      label="Storage"
+                      variant="outlined"
+                      value={storage || ""}
+                      name="storage"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* New Feature */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="new-feature-text"
+                      fullWidth
+                      label="New Feature"
+                      variant="outlined"
+                      value={new_feature || ""}
+                      name="new_feature"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Display */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <Typography
+                      className={classes.productSection}
+                      align="center"
+                      variant="h6"
+                    >
+                      Display
+                    </Typography>
+                  </Grid>
+                  {/* Display */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="display-text"
+                      fullWidth
+                      label="Display"
+                      variant="outlined"
+                      value={display || ""}
+                      name="display"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Display Resolution */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="display-text"
+                      fullWidth
+                      label="Display Resolution"
+                      variant="outlined"
+                      value={display_resolution || ""}
+                      name="display_resolution"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Display Screen*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="display-text"
+                      fullWidth
+                      label="Display Screen"
+                      variant="outlined"
+                      value={display_screen || ""}
+                      name="display_screen"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Camera */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <Typography
+                      className={classes.productSection}
+                      align="center"
+                      variant="h6"
+                    >
+                      Camera
+                    </Typography>
+                  </Grid>
+                  {/* Camera*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="camera-text"
+                      fullWidth
+                      label="Camera"
+                      variant="outlined"
+                      value={camera || ""}
+                      name="camera"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Video*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="video-text"
+                      fullWidth
+                      label="Video"
+                      variant="outlined"
+                      value={video || ""}
+                      name="video"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Connectivity */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <Typography
+                      className={classes.productSection}
+                      align="center"
+                      variant="h6"
+                    >
+                      Connectivity
+                    </Typography>
+                  </Grid>
+                  {/* Wifi*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="wifi-text"
+                      fullWidth
+                      label="Wifi"
+                      variant="outlined"
+                      value={wifi || ""}
+                      name="wifi"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Bluetooth*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="bluetooth-text"
+                      fullWidth
+                      label="Bluetooth"
+                      variant="outlined"
+                      value={bluetooth || ""}
+                      name="bluetooth"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Ports*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="ports-text"
+                      fullWidth
+                      label="Ports"
+                      variant="outlined"
+                      value={ports || ""}
+                      name="ports"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Physical details */}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <Typography
+                      className={classes.productSection}
+                      align="center"
+                      variant="h6"
+                    >
+                      Physical details
+                    </Typography>
+                  </Grid>
+                  {/* Size*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="size-text"
+                      fullWidth
+                      label="Size"
+                      variant="outlined"
+                      value={size || ""}
+                      name="size"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Weight*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="weight-text"
+                      fullWidth
+                      label="Weight"
+                      variant="outlined"
+                      value={weight || ""}
+                      name="weight"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Material*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="material-text"
+                      fullWidth
+                      label="Material"
+                      variant="outlined"
+                      value={material || ""}
+                      name="material"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
+                    />
+                  </Grid>
+                  {/* Battery capacity*/}
+                  <Grid item xs={12} sm={12} md={9}>
+                    <TextField
+                      id="battery_capacity-text"
+                      fullWidth
+                      label="Battery Capacity"
+                      variant="outlined"
+                      value={battery_capacity || ""}
+                      name="battery_capacity"
+                      onChange={(e) => onChange(e)}
+                      onKeyPress={(e) => keyPressed(e)}
                     />
                   </Grid>
                 </Grid>
@@ -576,7 +818,7 @@ export default function ProductEdit(props) {
                 <Grid container spacing={2} justify="center">
                   {/* slug */}
                   <Grid item xs={12} sm={12} md={9}>
-                    <TextField
+                    {/* <TextField
                       id="slug-text"
                       fullWidth
                       label="Search engine friendly page name (slug)"
@@ -585,7 +827,7 @@ export default function ProductEdit(props) {
                       name="slug"
                       onChange={(e) => onChange(e)}
                       onKeyPress={(e) => keyPressed(e)}
-                    />
+                    /> */}
                   </Grid>
                   {/* meta title */}
                   <Grid item xs={12} sm={12} md={9}>

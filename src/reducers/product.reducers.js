@@ -127,7 +127,7 @@ export function products(state = initialState, action) {
         ...state,
         loading: false,
         success: true,
-        items: state.items.filter((product) => product.id !== action.id),
+        items: state.items.filter((product) => !action.id.includes(product.id)),
       };
     case productConstants.DELETE_FAILURE:
       return {

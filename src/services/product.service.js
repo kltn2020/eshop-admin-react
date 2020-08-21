@@ -25,7 +25,6 @@ async function getById(id) {
 }
 
 async function add(product, image) {
-  console.log(image);
   if (image) {
     const imageData = new FormData();
 
@@ -76,50 +75,55 @@ async function add(product, image) {
 }
 
 async function update(id, product, image, delImage) {
-  const imageData = new FormData();
+  if (image.length > 0) {
+    const imageData = new FormData();
 
-  for (let i = 0; i < image.length; i++)
-    imageData.append("images", image[i].img);
+    let imageUrl = [];
+    for (let i = 0; i < image.length; i++) {
+      imageData.append("image", image[i].img);
 
-  imageData.append("product", id);
+      const imageDataConfig = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      };
 
-  const requestConfig = {
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
+      const res = await axios
+        .post(`/api/admin/upload`, imageData, imageDataConfig)
+        .then(handleResponse)
+        .catch(handleError);
 
-  const body = JSON.stringify(product);
-
-  if (delImage.length > 0) {
-    const imageRequestConfig = {
+      imageUrl.push({ url: res });
+    }
+    Object.assign(product, { images: imageUrl });
+    const requestConfig = {
       headers: {
         "Content-Type": "application/json",
       },
-      data: {
-        ids: delImage,
-      },
     };
-    await axios.delete(`/api/products/images`, imageRequestConfig);
-  }
 
-  if (imageData.get("images")) {
-    await axios
-      .put(`/api/products/${id}/`, body, requestConfig)
-      .then(handleResponse);
+    const body = JSON.stringify({
+      ...product,
+      images: [...product.images, ...imageUrl],
+    });
 
-    const configFormData = {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    };
     return await axios
-      .post("/api/products/images", imageData, configFormData)
-      .then(handleResponse);
+      .put(`/api/admin/products/${id}`, body, requestConfig)
+      .then(handleResponse)
+      .catch(handleError);
   } else {
+    const requestConfig = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    const body = JSON.stringify(product);
+
     return await axios
-      .put(`/api/products/${id}/`, body, requestConfig)
-      .then(handleResponse);
+      .put(`/api/admin/products/${id}`, body, requestConfig)
+      .then(handleResponse)
+      .catch(handleError);
   }
 }
 
@@ -130,13 +134,15 @@ async function _delete(ids) {
   };
 
   const promises = await ids.map((id) => {
-    return axios.delete(`/api/products/${id}`, requestConfig);
+    return axios.delete(`/api/admin/products/${id}`, requestConfig);
   });
-  return Promise.all(promises).then(handleResponse);
+  return Promise.all(promises).catch(handleError);
 }
 
 function handleResponse(response) {
-  let data = response.data.data;
+  let data;
+  if (response.data.data) data = response.data.data;
+  else data = response.data;
 
   return data;
 }

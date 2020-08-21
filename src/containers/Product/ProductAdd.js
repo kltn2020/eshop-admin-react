@@ -193,7 +193,7 @@ export default function ProductAdd() {
     brand_id: 1,
     category_id: 1,
     description: "",
-    active: true,
+    is_available: true,
   });
 
   const {
@@ -340,9 +340,15 @@ export default function ProductAdd() {
                       </Grid>
                     </Grid>
                     {/* General */}
-                    <Typography className={classes.productSection} variant="h6">
-                      General
-                    </Typography>
+                    <Grid item xs={12} sm={12} md={9}>
+                      <Typography
+                        className={classes.productSection}
+                        align="center"
+                        variant="h6"
+                      >
+                        General
+                      </Typography>
+                    </Grid>
                     {/* sku */}
                     <Grid item xs={12} sm={12} md={9}>
                       <TextField
@@ -350,7 +356,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="SKU"
                         variant="outlined"
-                        value={sku}
+                        value={sku || ""}
                         name="sku"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -364,7 +370,7 @@ export default function ProductAdd() {
                         required
                         label="Product Name"
                         variant="outlined"
-                        value={name}
+                        value={name || ""}
                         name="name"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -376,11 +382,15 @@ export default function ProductAdd() {
                         id="combo-box-category"
                         fullWidth
                         options={categories.items}
-                        value={categories.items[0] || null}
+                        value={
+                          categories.items.find(
+                            (element) => element.id === formData.category_id
+                          ) || null
+                        }
                         onChange={(e, newValue) =>
                           setFormData({
                             ...formData,
-                            category_id: newValue.value.id,
+                            category_id: newValue.id,
                           })
                         }
                         getOptionLabel={(option) => option.name}
@@ -399,11 +409,15 @@ export default function ProductAdd() {
                         id="combo-box-brand"
                         fullWidth
                         options={brands.items}
-                        value={brands.items[0] || null}
+                        value={
+                          brands.items.find(
+                            (element) => element.id === formData.brand_id
+                          ) || null
+                        }
                         onChange={(e, newValue) =>
                           setFormData({
                             ...formData,
-                            brand_id: newValue.value.id,
+                            brand_id: newValue.id,
                           })
                         }
                         getOptionLabel={(option) => option.name}
@@ -425,7 +439,7 @@ export default function ProductAdd() {
                           fullWidth
                           label="Price"
                           variant="outlined"
-                          value={price}
+                          value={price || 0}
                           name="price"
                           onChange={(e) => onChange(e)}
                           onKeyPress={(e) => keyPressed(e)}
@@ -438,24 +452,29 @@ export default function ProductAdd() {
                           fullWidth
                           label="Discount"
                           variant="outlined"
-                          value={discount}
+                          value={discount || 0}
                           name="discount"
                           onChange={(e) => onChange(e)}
                           onKeyPress={(e) => keyPressed(e)}
                         />
                       </Grid>
                     </Grid>
-                    {/* active */}
+                    {/* available */}
                     <Grid item xs={12} sm={12} md={9}>
                       <Autocomplete
                         id="combo-box-active"
                         fullWidth
                         options={statusOption}
                         value={
-                          formData.active ? statusOption[0] : statusOption[1]
+                          formData.is_available
+                            ? statusOption[0]
+                            : statusOption[1]
                         }
                         onChange={(e, newValue) =>
-                          setFormData({ ...formData, active: newValue.value })
+                          setFormData({
+                            ...formData,
+                            is_available: newValue.value,
+                          })
                         }
                         getOptionLabel={(option) => option.title}
                         renderInput={(params) => (
@@ -474,16 +493,22 @@ export default function ProductAdd() {
                         fullWidth
                         label="Description"
                         variant="outlined"
-                        value={description}
+                        value={description || ""}
                         name="description"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
                       />
                     </Grid>
                     {/* Configurations */}
-                    <Typography className={classes.productSection} variant="h6">
-                      Configurations
-                    </Typography>
+                    <Grid item xs={12} sm={12} md={9}>
+                      <Typography
+                        className={classes.productSection}
+                        align="center"
+                        variant="h6"
+                      >
+                        Configurations
+                      </Typography>
+                    </Grid>
                     {/* CPU */}
                     <Grid item xs={12} sm={12} md={9}>
                       <TextField
@@ -491,7 +516,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="CPU"
                         variant="outlined"
-                        value={cpu}
+                        value={cpu || ""}
                         name="cpu"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -504,7 +529,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="GPU"
                         variant="outlined"
-                        value={gpu}
+                        value={gpu || ""}
                         name="gpu"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -517,7 +542,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="OS"
                         variant="outlined"
-                        value={os}
+                        value={os || ""}
                         name="os"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -530,7 +555,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="RAM"
                         variant="outlined"
-                        value={ram}
+                        value={ram || ""}
                         name="ram"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -543,7 +568,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Storage"
                         variant="outlined"
-                        value={storage}
+                        value={storage || ""}
                         name="storage"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -556,16 +581,22 @@ export default function ProductAdd() {
                         fullWidth
                         label="New Feature"
                         variant="outlined"
-                        value={new_feature}
+                        value={new_feature || ""}
                         name="new_feature"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
                       />
                     </Grid>
                     {/* Display */}
-                    <Typography className={classes.productSection} variant="h6">
-                      Display
-                    </Typography>
+                    <Grid item xs={12} sm={12} md={9}>
+                      <Typography
+                        className={classes.productSection}
+                        align="center"
+                        variant="h6"
+                      >
+                        Display
+                      </Typography>
+                    </Grid>
                     {/* Display */}
                     <Grid item xs={12} sm={12} md={9}>
                       <TextField
@@ -573,7 +604,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Display"
                         variant="outlined"
-                        value={display}
+                        value={display || ""}
                         name="display"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -586,7 +617,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Display Resolution"
                         variant="outlined"
-                        value={display_resolution}
+                        value={display_resolution || ""}
                         name="display_resolution"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -599,16 +630,22 @@ export default function ProductAdd() {
                         fullWidth
                         label="Display Screen"
                         variant="outlined"
-                        value={display_screen}
+                        value={display_screen || ""}
                         name="display_screen"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
                       />
                     </Grid>
                     {/* Camera */}
-                    <Typography className={classes.productSection} variant="h6">
-                      Camera
-                    </Typography>
+                    <Grid item xs={12} sm={12} md={9}>
+                      <Typography
+                        className={classes.productSection}
+                        align="center"
+                        variant="h6"
+                      >
+                        Camera
+                      </Typography>
+                    </Grid>
                     {/* Camera*/}
                     <Grid item xs={12} sm={12} md={9}>
                       <TextField
@@ -616,7 +653,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Camera"
                         variant="outlined"
-                        value={camera}
+                        value={camera || ""}
                         name="camera"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -629,16 +666,22 @@ export default function ProductAdd() {
                         fullWidth
                         label="Video"
                         variant="outlined"
-                        value={video}
+                        value={video || ""}
                         name="video"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
                       />
                     </Grid>
                     {/* Connectivity */}
-                    <Typography className={classes.productSection} variant="h6">
-                      Connectivity
-                    </Typography>
+                    <Grid item xs={12} sm={12} md={9}>
+                      <Typography
+                        className={classes.productSection}
+                        align="center"
+                        variant="h6"
+                      >
+                        Connectivity
+                      </Typography>
+                    </Grid>
                     {/* Wifi*/}
                     <Grid item xs={12} sm={12} md={9}>
                       <TextField
@@ -646,7 +689,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Wifi"
                         variant="outlined"
-                        value={wifi}
+                        value={wifi || ""}
                         name="wifi"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -659,7 +702,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Bluetooth"
                         variant="outlined"
-                        value={bluetooth}
+                        value={bluetooth || ""}
                         name="bluetooth"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -672,16 +715,22 @@ export default function ProductAdd() {
                         fullWidth
                         label="Ports"
                         variant="outlined"
-                        value={ports}
+                        value={ports || ""}
                         name="ports"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
                       />
                     </Grid>
                     {/* Physical details */}
-                    <Typography className={classes.productSection} variant="h6">
-                      Physical details
-                    </Typography>
+                    <Grid item xs={12} sm={12} md={9}>
+                      <Typography
+                        className={classes.productSection}
+                        align="center"
+                        variant="h6"
+                      >
+                        Physical details
+                      </Typography>
+                    </Grid>
                     {/* Size*/}
                     <Grid item xs={12} sm={12} md={9}>
                       <TextField
@@ -689,7 +738,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Size"
                         variant="outlined"
-                        value={size}
+                        value={size || ""}
                         name="size"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -702,7 +751,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Weight"
                         variant="outlined"
-                        value={weight}
+                        value={weight || ""}
                         name="weight"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -715,7 +764,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Material"
                         variant="outlined"
-                        value={material}
+                        value={material || ""}
                         name="material"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}
@@ -728,7 +777,7 @@ export default function ProductAdd() {
                         fullWidth
                         label="Battery Capacity"
                         variant="outlined"
-                        value={battery_capacity}
+                        value={battery_capacity || ""}
                         name="battery_capacity"
                         onChange={(e) => onChange(e)}
                         onKeyPress={(e) => keyPressed(e)}

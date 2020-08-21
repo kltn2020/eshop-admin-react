@@ -142,34 +142,26 @@ function add(product, image) {
 
 function update(id, product, image, delImageId) {
   return async (dispatch) => {
-    dispatch(request(id));
+    dispatch(request(product));
     await productService.update(id, product, image, delImageId).then(
       (product) => {
         dispatch(success(id));
         history.push({ pathname: "/products", state: 202 });
       },
       (error) => {
-        if (error.response && error.response.data) {
-          let errorkey = Object.keys(error.response.data)[0];
-
-          let errorValue = error.response.data[errorkey][0];
-
-          dispatch(failure(errorkey.toUpperCase() + ": " + errorValue));
-        } else {
-          dispatch(failure(error.toString()));
-        }
+        dispatch(failure(error));
       }
     );
   };
 
-  function request(id) {
-    return { type: productConstants.UPDATE_REQUEST, id };
+  function request(product) {
+    return { type: productConstants.UPDATE_REQUEST, product };
   }
   function success(id) {
     return { type: productConstants.UPDATE_SUCCESS, id };
   }
   function failure(error) {
-    return { type: productConstants.UPDATE_FAILURE, id, error };
+    return { type: productConstants.UPDATE_FAILURE, error };
   }
 }
 
@@ -178,20 +170,12 @@ function _delete(id) {
   return async (dispatch) => {
     dispatch(request(id));
     await productService.delete(id).then(
-      async (id) => {
+      () => {
         dispatch(success(id));
         history.replace({ pathname: "/products", state: 203 });
       },
       (error) => {
-        if (error.response && error.response.data) {
-          let errorkey = Object.keys(error.response.data)[0];
-
-          let errorValue = error.response.data[errorkey][0];
-
-          dispatch(failure(errorkey.toUpperCase() + ": " + errorValue));
-        } else {
-          dispatch(failure(error.toString()));
-        }
+        dispatch(failure(error));
       }
     );
   };

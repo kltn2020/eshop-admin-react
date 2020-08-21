@@ -30,12 +30,14 @@ import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import Chip from "@material-ui/core/Chip";
 import EditIcon from "@material-ui/icons/Edit";
-import FileCopyIcon from "@material-ui/icons/FileCopy";
 import Card from "@material-ui/core/Card";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import CardContent from "@material-ui/core/CardContent";
+import Collapse from "@material-ui/core/Collapse";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import TextField from "@material-ui/core/TextField";
 
 //Components
 import AdminLayout from "../../components/Layout";
@@ -43,7 +45,7 @@ import CustomAlert from "../../components/Alert";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { productActions, categoryActions } from "../../actions";
+import { productActions, categoryActions, brandActions } from "../../actions";
 
 const headCells = [
   {
@@ -319,7 +321,10 @@ const EnhancedTableToolbar = (props) => {
           </Grid>
           <Grid item>
             <Tooltip title="Filter list">
-              <IconButton aria-label="filter list">
+              <IconButton
+                aria-label="filter list"
+                onClick={props.handleCollapseFilter}
+              >
                 <FilterListIcon />
               </IconButton>
             </Tooltip>
@@ -410,6 +415,8 @@ export default function ProductList() {
   //Redux Hook
   const dispatch = useDispatch();
   const products = useSelector((state) => state.products);
+  const categories = useSelector((state) => state.categories);
+  const brands = useSelector((state) => state.brands);
 
   //Table Hooks
   const [order, setOrder] = React.useState("asc");
@@ -477,7 +484,49 @@ export default function ProductList() {
   const deletePermission = true;
 
   //*Filter
+  const [categoryListFilter, setCategoryListFilter] = useState([
+    { id: 0, name: "All" },
+  ]);
+  const [brandListFilter, setBrandListFilter] = useState([
+    { id: 0, name: "All" },
+  ]);
+
   const [statusFilter, setStatusFilter] = useState("");
+  const [collapseFilter, setCollapseFilter] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState(categoryListFilter[0]);
+  const [brandFilter, setBrandFilter] = useState(brandListFilter[0]);
+
+  const handleCollapseFilter = () => {
+    setCollapseFilter(!collapseFilter);
+  };
+
+  useEffect(() => {
+    setCategoryListFilter((categoryListFilter) => [
+      ...categoryListFilter,
+      ...categories.items,
+    ]);
+  }, [categories.items]);
+
+  useEffect(() => {
+    setBrandListFilter((brandListFilter) => [
+      ...brandListFilter,
+      ...brands.items,
+    ]);
+  }, [brands.items]);
+
+  //Load product with Filter
+  useEffect(() => {
+    dispatch(
+      productActions.getAll(
+        `?size=${rowsPerPage}&&page=${1}${
+          categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
+        }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}`
+      )
+    );
+
+    setPage(0);
+  }, [categoryFilter, brandFilter, rowsPerPage, dispatch]);
+
   //Chip function
   const handleChipClick = (e) => {
     dispatch(
@@ -500,10 +549,12 @@ export default function ProductList() {
     setPage(0);
   };
 
-  //*load product (with Pagination) + load category
+  //*Load category,brand
   useEffect(() => {
     if (viewPermission) {
-      dispatch(productActions.getAll(`?size=${rowsPerPage}&&page=${page + 1}`));
+      //dispatch(productActions.getAll(`?size=${rowsPerPage}&&page=${page + 1}`));
+      dispatch(categoryActions.getAll());
+      dispatch(brandActions.getAll());
     }
   }, [viewPermission, dispatch, rowsPerPage, page]);
 
@@ -522,7 +573,6 @@ export default function ProductList() {
 
           {/* Success & Error handling */}
           {<CustomAlert loading={products.loading} />}
-
           {products.error && (
             <CustomAlert
               openError={true}
@@ -541,7 +591,51 @@ export default function ProductList() {
               onSearch={onSearch}
               addPermission={addPermission}
               deletePermission={deletePermission}
+              handleCollapseFilter={handleCollapseFilter}
             />
+
+            {/* Filter collapse */}
+            <Collapse in={collapseFilter}>
+              <Paper className={classes.marginY}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Autocomplete
+                      id="combo-box-category"
+                      fullWidth
+                      options={categoryListFilter}
+                      value={categoryFilter || null}
+                      onChange={(e, newValue) => setCategoryFilter(newValue)}
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Category"
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Autocomplete
+                      id="combo-box-brand"
+                      fullWidth
+                      options={brandListFilter}
+                      value={brandFilter || null}
+                      onChange={(e, newValue) => setBrandFilter(newValue)}
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Brand"
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Collapse>
+
             {/* Filter Chip */}
             <Grid
               style={{ marginLeft: 8, marginBottom: 16 }}
@@ -574,6 +668,7 @@ export default function ProductList() {
                 />
               </Grid>
             </Grid>
+
             {/* Table Desktop version */}
             <Hidden smDown>
               <TableContainer className={classes.tableContainer}>

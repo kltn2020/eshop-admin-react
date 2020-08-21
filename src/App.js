@@ -13,6 +13,7 @@ import Setting from "./containers/Setting";
 //>>Product
 import ProductList from "./containers/Product/ProductList";
 import ProductAdd from "./containers/Product/ProductAdd";
+import ProductEdit from "./containers/Product/ProductEdit";
 
 //Redux
 import { useSelector } from "react-redux";
@@ -49,11 +50,11 @@ const App = () => {
               path="/products-add"
               component={ProductAdd}
             ></AdminRoute>
-            {/* <AdminRoute
+            <AdminRoute
               exact
               path="/products-edit/:id"
               component={ProductEdit}
-            ></AdminRoute> */}
+            ></AdminRoute>
             <AdminRoute exact path="/setting" component={Setting}></AdminRoute>
           </Switch>
         </Router>
