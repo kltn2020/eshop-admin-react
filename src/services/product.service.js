@@ -21,7 +21,10 @@ async function getAllNonPagination() {
 }
 
 async function getById(id) {
-  return await axios.get(`/api/products/${id}`).then(handleResponse);
+  return await axios
+    .get(`/api/products/${id}`)
+    .then(handleResponse)
+    .catch(handleError);
 }
 
 async function add(product, image) {

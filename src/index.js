@@ -6,12 +6,18 @@ import * as serviceWorker from "./serviceWorker";
 import { store } from "./store";
 import { Provider } from "react-redux";
 
+//Date time picker
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+
 ReactDOM.render(
   // <React.StrictMode>
   //   <App />
   // </React.StrictMode>,
   <Provider store={store}>
-    <App />
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <App />
+    </MuiPickersUtilsProvider>
   </Provider>,
   document.getElementById("root")
 );

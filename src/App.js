@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Router, Route, Switch } from "react-router-dom";
 
 //Authority
@@ -14,6 +14,8 @@ import Setting from "./containers/Setting";
 import ProductList from "./containers/Product/ProductList";
 import ProductAdd from "./containers/Product/ProductAdd";
 import ProductEdit from "./containers/Product/ProductEdit";
+//>>Voucher
+import VoucherList from "./containers/Voucher/VoucherList";
 
 //Redux
 import { useSelector } from "react-redux";
@@ -55,6 +57,13 @@ const App = () => {
               path="/products-edit/:id"
               component={ProductEdit}
             ></AdminRoute>
+            {/* Voucher */}
+            <AdminRoute
+              exact
+              path="/vouchers"
+              component={VoucherList}
+            ></AdminRoute>
+
             <AdminRoute exact path="/setting" component={Setting}></AdminRoute>
           </Switch>
         </Router>

@@ -16,6 +16,8 @@ function getAll(url) {
       },
       (error) => {
         dispatch(failure(error));
+        if (error && error.includes("not authenticated"))
+          localStorage.removeItem("token");
       }
     );
   };
