@@ -1,5 +1,5 @@
 import axios from "axios";
-//import backendUrl from "../constants/index";
+import { backendUrl } from "../constants/index";
 
 export const productService = {
   getAll,
@@ -11,18 +11,21 @@ export const productService = {
 };
 
 async function getAll(url = null) {
-  const params = url === null ? `/api/products` : `/api/products` + url;
+  const params =
+    url === null
+      ? `${backendUrl}/api/products`
+      : `${backendUrl}/api/products` + url;
 
   return await axios.get(params).then(handleResponse).catch(handleError);
 }
 
 async function getAllNonPagination() {
-  return await axios.get(`/api/products/`).then(handleResponse);
+  return await axios.get(`${backendUrl}/api/products`).then(handleResponse);
 }
 
 async function getById(id) {
   return await axios
-    .get(`/api/products/${id}`)
+    .get(`${backendUrl}/api/products/${id}`)
     .then(handleResponse)
     .catch(handleError);
 }
@@ -42,7 +45,7 @@ async function add(product, image) {
       };
 
       const res = await axios
-        .post(`/api/admin/upload`, imageData, imageDataConfig)
+        .post(`${backendUrl}/api/admin/upload`, imageData, imageDataConfig)
         .then(handleResponse)
         .catch(handleError);
 
@@ -58,7 +61,7 @@ async function add(product, image) {
     const body = JSON.stringify(product);
 
     return await axios
-      .post("/api/admin/products", body, requestConfig)
+      .post(`${backendUrl}/api/admin/products`, body, requestConfig)
       .then(handleResponse)
       .catch(handleError);
   } else {
@@ -71,7 +74,7 @@ async function add(product, image) {
     const body = JSON.stringify(product);
 
     return await axios
-      .post("/api/admin/products", body, requestConfig)
+      .post(`${backendUrl}/api/admin/products`, body, requestConfig)
       .then(handleResponse)
       .catch(handleError);
   }
@@ -92,7 +95,7 @@ async function update(id, product, image, delImage) {
       };
 
       const res = await axios
-        .post(`/api/admin/upload`, imageData, imageDataConfig)
+        .post(`${backendUrl}/api/admin/upload`, imageData, imageDataConfig)
         .then(handleResponse)
         .catch(handleError);
 
@@ -111,7 +114,7 @@ async function update(id, product, image, delImage) {
     });
 
     return await axios
-      .put(`/api/admin/products/${id}`, body, requestConfig)
+      .put(`${backendUrl}/api/admin/products/${id}`, body, requestConfig)
       .then(handleResponse)
       .catch(handleError);
   } else {
@@ -124,7 +127,7 @@ async function update(id, product, image, delImage) {
     const body = JSON.stringify(product);
 
     return await axios
-      .put(`/api/admin/products/${id}`, body, requestConfig)
+      .put(`${backendUrl}/api/admin/products/${id}`, body, requestConfig)
       .then(handleResponse)
       .catch(handleError);
   }
@@ -137,7 +140,10 @@ async function _delete(ids) {
   };
 
   const promises = await ids.map((id) => {
-    return axios.delete(`/api/admin/products/${id}`, requestConfig);
+    return axios.delete(
+      `${backendUrl}/api/admin/products/${id}`,
+      requestConfig
+    );
   });
   return Promise.all(promises).catch(handleError);
 }

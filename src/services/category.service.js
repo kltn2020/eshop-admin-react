@@ -1,5 +1,5 @@
 import axios from "axios";
-//import backendUrl from "../constants/index";
+import { backendUrl } from "../constants/index";
 
 export const categoryService = {
   getAll,
@@ -7,7 +7,9 @@ export const categoryService = {
 
 async function getAll(url = null) {
   const params =
-    url === null ? `/api/admin/categories` : `/api/admin/categories` + url;
+    url === null
+      ? `${backendUrl}/api/admin/categories`
+      : `${backendUrl}/api/admin/categories` + url;
 
   return await axios.get(params).then(handleResponse).catch(handleError);
 }

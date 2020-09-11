@@ -1,7 +1,6 @@
 //import { authHeader } from "../store";
 import axios from "axios";
-
-// const backend_url = "https://rocky-sierra-70366.herokuapp.com";
+import { backendUrl } from "../constants/index";
 
 export const userService = {
   login,
@@ -25,7 +24,7 @@ async function login(user) {
   const body = JSON.stringify(user);
 
   return await axios
-    .post(`/api/auth/login`, body, requestConfig)
+    .post(`${backendUrl}/api/auth/login`, body, requestConfig)
     .then(handleResponse)
     .catch(handleError);
 }
@@ -39,7 +38,7 @@ async function register(user) {
 
   const body = JSON.stringify(user);
   return await axios
-    .post("/api/auth/register", body, config)
+    .post(`${backendUrl}/api/auth/register`, body, config)
     .then(handleResponse)
     .catch(handleError);
 }
@@ -52,7 +51,7 @@ async function getMe() {
     },
   };
   return await axios
-    .get(`/api/home/profile`, requestConfig)
+    .get(`${backendUrl}/api/home/profile`, requestConfig)
     .then(handleResponse);
 }
 
@@ -66,7 +65,8 @@ async function getAll(url = null) {
   const requestConfig = {
     //headers: authHeader()
   };
-  const params = url === null ? `/api/users` : `/api/users` + url;
+  const params =
+    url === null ? `${backendUrl}/api/users` : `${backendUrl}/api/users` + url;
 
   return await axios.get(params, requestConfig).then(handleResponse);
 }
@@ -75,7 +75,9 @@ async function getAllNonPagination() {
   const requestConfig = {
     //headers: authHeader(),
   };
-  return await axios.get(`/api/users/`, requestConfig).then(handleResponse);
+  return await axios
+    .get(`${backendUrl}/api/users/`, requestConfig)
+    .then(handleResponse);
 }
 
 async function getById(id) {
@@ -83,7 +85,7 @@ async function getById(id) {
     //headers: authHeader(),
   };
   return await axios
-    .get(`/api/users/${id}`, requestConfig)
+    .get(`${backendUrl}/api/users/${id}`, requestConfig)
     .then(handleResponse);
 }
 
@@ -99,7 +101,9 @@ async function add(user) {
     : (user.is_staff = "True");
 
   const body = JSON.stringify(user);
-  await axios.post("/api/users/", body, config).then(handleResponse);
+  await axios
+    .post(`${backendUrl}/api/users/`, body, config)
+    .then(handleResponse);
 }
 
 async function update(id, user, user_permissions) {
@@ -111,13 +115,17 @@ async function update(id, user, user_permissions) {
 
   const permissions = JSON.stringify({ user_permissions: user_permissions });
   await axios
-    .post(`/api/users/${id}/set_permissions/`, permissions, requestConfig)
+    .post(
+      `${backendUrl}/api/users/${id}/set_permissions/`,
+      permissions,
+      requestConfig
+    )
     .then(handleResponse);
 
   const body = JSON.stringify(user);
 
   await axios
-    .put(`/api/users/${id}/`, body, requestConfig)
+    .put(`${backendUrl}/api/users/${id}/`, body, requestConfig)
     .then(handleResponse);
 }
 
@@ -127,7 +135,7 @@ async function _delete(ids) {
     // headers: authHeader()
   };
   const promises = await ids.map((id) => {
-    return axios.delete(`/api/users/${id}`, requestConfig);
+    return axios.delete(`${backendUrl}/api/users/${id}`, requestConfig);
   });
   return Promise.all(promises).then(handleResponse);
 }

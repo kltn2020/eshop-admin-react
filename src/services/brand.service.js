@@ -1,12 +1,15 @@
 import axios from "axios";
-//import backendUrl from "../constants/index";
+import { backendUrl } from "../constants/index";
 
 export const brandService = {
   getAll,
 };
 
 async function getAll(url = null) {
-  const params = url === null ? `/api/admin/brands` : `/api/admin/brands` + url;
+  const params =
+    url === null
+      ? `${backendUrl}/api/admin/brands`
+      : `${backendUrl}/api/admin/brands` + url;
 
   return await axios.get(params).then(handleResponse).catch(handleError);
 }
