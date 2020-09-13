@@ -9,10 +9,10 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
-import FastfoodIcon from "@material-ui/icons/Fastfood";
+import LaptopIcon from "@material-ui/icons/Laptop";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
-import LocalShippingIcon from "@material-ui/icons/LocalShipping";
+// import LocalShippingIcon from "@material-ui/icons/LocalShipping";
 import List from "@material-ui/core/List";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
@@ -24,8 +24,8 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import LocationCityIcon from "@material-ui/icons/LocationCity";
-import StreetviewIcon from "@material-ui/icons/Streetview";
+// import LocationCityIcon from "@material-ui/icons/LocationCity";
+// import StreetviewIcon from "@material-ui/icons/Streetview";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,9 +51,9 @@ export default function MainListItems(props) {
     setOpenSaleTab(!openSaleTab);
   };
 
-  const handleClickShippingTab = () => {
-    setOpenShippingTab(!openShippingTab);
-  };
+  // const handleClickShippingTab = () => {
+  //   setOpenShippingTab(!openShippingTab);
+  // };
 
   const handleClickShopTab = () => {
     setOpenShopTab(!openShopTab);
@@ -236,7 +236,7 @@ export default function MainListItems(props) {
               to="/products"
             >
               <ListItemIcon>
-                <FastfoodIcon />
+                <LaptopIcon />
               </ListItemIcon>
               <ListItemText primary="Products" />
             </ListItem>

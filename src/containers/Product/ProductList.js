@@ -527,20 +527,26 @@ export default function ProductList() {
       productActions.getAll(
         `?size=${rowsPerPage}&&page=${1}${
           categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
-        }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}`
+        }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}${
+          statusFilter !== "" ? `&&is_available=${statusFilter}` : ""
+        }`
       )
     );
 
     setPage(0);
-  }, [categoryFilter, brandFilter, rowsPerPage, dispatch]);
+  }, [categoryFilter, brandFilter, rowsPerPage, dispatch, statusFilter]);
 
   //Chip function
   const handleChipClick = (e) => {
-    dispatch(
-      productActions.getAll(
-        `?search=${search}&limit=${rowsPerPage}&offset=0&active=${e.currentTarget.id}`
-      )
-    );
+    // dispatch(
+    //   productActions.getAll(
+    //     `?size=${rowsPerPage}&&page=${1}${
+    //       categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
+    //     }${
+    //       brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``
+    //     }&&is_available=${e.currentTarget.id}`
+    //   )
+    // );
     setStatusFilter(e.currentTarget.id);
   };
 
