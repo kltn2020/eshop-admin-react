@@ -4,6 +4,7 @@ const initialState = {
   loading: false,
   items: [],
   item: [],
+  totalItems: 0,
 };
 
 export function products(state = initialState, action) {
@@ -127,6 +128,7 @@ export function products(state = initialState, action) {
         ...state,
         loading: false,
         success: true,
+        totalItems: state.totalItems - 1,
         items: state.items.filter((product) => !action.id.includes(product.id)),
       };
     case productConstants.DELETE_FAILURE:

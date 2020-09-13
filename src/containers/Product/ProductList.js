@@ -463,6 +463,13 @@ export default function ProductList() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+    dispatch(
+      productActions.getAll(
+        `?size=${rowsPerPage}&&page=${newPage + 1}${
+          categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
+        }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}`
+      )
+    );
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -474,7 +481,7 @@ export default function ProductList() {
 
   const emptyRows =
     rowsPerPage -
-      Math.min(rowsPerPage, products.items.length - page * rowsPerPage) || 0;
+      Math.min(rowsPerPage, products.totalItems - page * rowsPerPage) || 0;
 
   //Main functions
   //*Permission access
@@ -881,7 +888,7 @@ export default function ProductList() {
               count={products.totalItems || 0}
               rowsPerPage={rowsPerPage}
               labelRowsPerPage={"Rows:"}
-              page={products.totalPage - 1 || 0}
+              page={page}
               onChangePage={handleChangePage}
               onChangeRowsPerPage={handleChangeRowsPerPage}
             />
