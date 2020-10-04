@@ -730,7 +730,6 @@ export default function ProductList() {
                             <TableCell>
                               <img
                                 height={48}
-                                width={48}
                                 src={
                                   row.images.length > 0
                                     ? row.images[0].url
@@ -765,7 +764,7 @@ export default function ProductList() {
                               </Grid>
                             </TableCell>
                             <TableCell align="right">
-                              {row.price.toLocaleString()}
+                              {row.price && row.price.toLocaleString()}
                             </TableCell>
                             <TableCell>{row.category.name}</TableCell>
                             <TableCell>{row.brand.name}</TableCell>
