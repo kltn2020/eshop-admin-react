@@ -155,7 +155,7 @@ export default function CustomDrawer(props) {
             noWrap
             className={classes.title}
           >
-            Admin Template
+            Eshop - Admin
           </Typography>
 
           <div>
