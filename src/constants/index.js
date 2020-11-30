@@ -9,7 +9,5 @@ export * from "./order.constants";
 export const themeConstants = { CHANGE_THEME: "CHANGE_THEME" };
 
 export const backendUrl =
-  process.env.NODE_ENV === "production"
-    ? "https://rocky-sierra-70366.herokuapp.com"
-    : "";
+  process.env.NODE_ENV === "production" ? "http://35.213.174.112" : "";
 //export const backendUrl = "https://rocky-sierra-70366.herokuapp.com";

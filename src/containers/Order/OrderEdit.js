@@ -268,7 +268,7 @@ export default function OrderEdit(props) {
                 <Paper className={classes.padding} elevation={4}>
                   {orders.item && orders.item.voucher && (
                     <Typography variant="h6">
-                      Voucher: {orders.item.voucher || ""}
+                      Voucher: {orders.item.voucher.code || ""}
                     </Typography>
                   )}
 
