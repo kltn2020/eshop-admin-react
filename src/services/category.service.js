@@ -28,6 +28,6 @@ function handleError(error) {
 
     return Promise.reject(errorkey.toUpperCase() + ": " + errorValue);
   } else {
-    return Promise.reject(error.response.data.error.message);
+    return Promise.reject(error.response.data.message);
   }
 }

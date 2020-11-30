@@ -1,5 +1,5 @@
 {
-  "proxy": "https://rocky-sierra-70366.herokuapp.com",
+  "proxy": "http://35.213.174.112",
   "name": "eshop-admin-react",
   "version": "0.1.0",
   "private": true,
