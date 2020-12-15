@@ -16,6 +16,21 @@ const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
   },
+  "@global": {
+    "::-webkit-scrollbar": {
+      width: "8px",
+      height: "7px",
+    },
+
+    "::-webkit-scrollbar-thumb": {
+      backgroundColor: theme.palette.primary.main,
+      borderRadius: "50px",
+    },
+
+    "::-webkit-scrollbar-track": {
+      boxShadow: " inset 0 0 4px rgba(0,0,0,0.2)",
+    },
+  },
   appBarSpacer: theme.mixins.toolbar,
   content: {
     flexGrow: 1,

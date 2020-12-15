@@ -467,7 +467,9 @@ export default function ProductList() {
       productActions.getAll(
         `?size=${rowsPerPage}&&page=${newPage + 1}${
           categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
-        }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}`
+        }${
+          brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``
+        }&&search_terms=${search}`
       )
     );
   };
@@ -509,19 +511,22 @@ export default function ProductList() {
 
   useEffect(() => {
     setCategoryListFilter((categoryListFilter) => [
-      ...categoryListFilter,
+      categoryListFilter[0],
       ...categories.items,
     ]);
   }, [categories.items]);
 
   useEffect(() => {
     setBrandListFilter((brandListFilter) => [
-      ...brandListFilter,
+      brandListFilter[0],
       ...brands.items,
     ]);
   }, [brands.items]);
 
-  //Load product with Filter
+  //Load product with Filter and Search
+
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     dispatch(
       productActions.getAll(
@@ -551,12 +556,15 @@ export default function ProductList() {
   };
 
   //*Search
-  const [search, setSearch] = useState("");
   //Handle Search
   const onSearch = () => {
     dispatch(
       productActions.getAll(
-        `?search=${search}&limit=${rowsPerPage}&offset=0&active=${statusFilter}`
+        `?search_terms=${search}&&size=${rowsPerPage}&&page=${1}${
+          categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
+        }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}${
+          statusFilter !== "" ? `&&is_available=${statusFilter}` : ""
+        }`
       )
     );
     setPage(0);

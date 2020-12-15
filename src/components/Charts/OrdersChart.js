@@ -13,7 +13,6 @@ import {
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { orderActions } from "../../actions";
 
 export default function OrdersChart() {
   const theme = useTheme();
@@ -42,7 +41,7 @@ export default function OrdersChart() {
 
       //Funtion to get date outside order and format it
       const pyDates = [...orders.items].map((order, index) => {
-        const d = new Date(order.created_at);
+        const d = new Date(order.order_date);
         d.setUTCHours(0, 0, 0, 0);
 
         return { date: d, order: order };
