@@ -1,8 +1,9 @@
 FROM node:10.12-alpine as builder
 WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install
 COPY . ./
-RUN npm install
-RUN npm run build
+RUN yarn build
 
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
