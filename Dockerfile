@@ -1,4 +1,4 @@
-FROM node:10.12-alpine as builder
+FROM node:12.20-alpine as builder
 WORKDIR /app
 COPY package.json yarn.lock ./
 RUN yarn install
