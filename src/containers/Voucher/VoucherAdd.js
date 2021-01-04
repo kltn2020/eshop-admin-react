@@ -60,7 +60,7 @@ export default function VoucherAddModal(props) {
   const [formData, setFormData] = useState({
     code: "",
     value: 0,
-    is_used: true,
+    is_used: false,
     category_id: "",
   });
 
