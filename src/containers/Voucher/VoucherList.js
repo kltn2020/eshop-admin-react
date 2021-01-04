@@ -76,7 +76,7 @@ const headCells = [
     id: "is_used",
     numeric: false,
     disablePadding: false,
-    label: "Active",
+    label: "Is Used",
   },
   { id: "action", numeric: true, disablePadding: false, label: "Action" },
 ];
@@ -582,11 +582,11 @@ export default function VoucherList() {
                               variant="body2"
                               className={clsx({
                                 [classes.status]: true,
-                                [classes.available]: row.is_used,
-                                [classes.unavailable]: !row.is_used,
+                                [classes.available]: !row.is_used,
+                                [classes.unavailable]: row.is_used,
                               })}
                             >
-                              {row.is_used ? "Active" : "Unactive"}
+                              {row.is_used ? "Is Used" : "Available"}
                             </Typography>
                           </TableCell>
                           <TableCell align="right">

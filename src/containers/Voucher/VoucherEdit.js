@@ -63,8 +63,8 @@ export default function VoucherEditModal(props) {
   const [formData, setFormData] = useState({
     code: "",
     value: 0,
-    valid_from: new Date(),
-    valid_to: new Date(),
+    valid_from: "",
+    valid_to: "",
     category_id: 1,
   });
 
@@ -74,6 +74,8 @@ export default function VoucherEditModal(props) {
   }, [vouchers.item]);
 
   const onSubmit = async () => {
+    delete formData.valid_from;
+    delete formData.valid_to;
     dispatch(voucherActions.update(props.id, formData));
     handleClose();
   };
