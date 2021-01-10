@@ -33,7 +33,24 @@ import UsersChart from "../components/Charts/UsersChart";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { orderActions, productActions, voucherActions } from "../actions";
+import {
+  orderActions,
+  productActions,
+  voucherActions,
+  reviewActions,
+} from "../actions";
+
+//Custom Functions
+function dateFormat(date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    // second: "numeric",
+    minute: "numeric",
+    hour: "numeric",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(new Date(date));
+}
 
 const useStyles = makeStyles((theme) => ({
   sectionBtn: {
@@ -101,6 +118,7 @@ export default function Dashboard() {
   const orders = useSelector((state) => state.orders);
   const products = useSelector((state) => state.products);
   const vouchers = useSelector((state) => state.vouchers);
+  const reviews = useSelector((state) => state.reviews);
 
   //Open login success snackbar
   const [open, setOpen] = useState(false);
@@ -119,6 +137,7 @@ export default function Dashboard() {
     dispatch(orderActions.getAll());
     dispatch(productActions.getAll());
     dispatch(voucherActions.getAll());
+    dispatch(reviewActions.getAll());
   }, [dispatch]);
   useEffect(() => {
     if (orders.items && orders.items.length > 0) {
@@ -256,7 +275,7 @@ export default function Dashboard() {
                         className={classes.statictisPaper}
                       >
                         <Typography variant="h4">
-                          {vouchers.items.length || 0}
+                          {vouchers.totalItems || 0}
                         </Typography>
                         <Typography variant="h6">Vouchers</Typography>
                         <Button component={Link} to="/vouchers">
@@ -272,7 +291,10 @@ export default function Dashboard() {
                         severity="error"
                         className={classes.statictisPaper}
                       >
-                        <Typography variant="h4">0</Typography>
+                        <Typography variant="h4">
+                          {" "}
+                          {reviews.totalItems || 0}
+                        </Typography>
                         <Typography variant="h6">Reviews</Typography>
                         <Button component={Link} to="/reviews">
                           More info {">"}
@@ -409,8 +431,8 @@ export default function Dashboard() {
                                 {(row.amount || 0).toLocaleString()}
                               </TableCell>
                               <TableCell align="right">
-                                {new Date(
-                                  row.created_at || {}
+                                {dateFormat(
+                                  row.inserted_at || {}
                                 ).toLocaleString()}
                               </TableCell>
                               <TableCell align="right">

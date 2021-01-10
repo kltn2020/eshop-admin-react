@@ -23,12 +23,10 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Grid from "@material-ui/core/Grid";
 import Button from "@material-ui/core/Button";
 import DeleteIcon from "@material-ui/icons/Delete";
-import FilterListIcon from "@material-ui/icons/FilterList";
 import AddIcon from "@material-ui/icons/Add";
 import Hidden from "@material-ui/core/Hidden";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
-import Chip from "@material-ui/core/Chip";
 import EditIcon from "@material-ui/icons/Edit";
 import Card from "@material-ui/core/Card";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
@@ -37,10 +35,12 @@ import CardContent from "@material-ui/core/CardContent";
 //Components
 import AdminLayout from "../../components/Layout";
 import CustomAlert from "../../components/Alert";
+import ReviewViewModal from "./ReviewView";
+import ReviewReplyModal from "./ReviewReply";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { orderActions } from "../../actions";
+import { reviewActions } from "../../actions";
 
 const headCells = [
   {
@@ -49,16 +49,21 @@ const headCells = [
     disablePadding: false,
     label: "ID",
   },
-  // { id: "user", numeric: false, disablePadding: false, label: "User" },
-  // { id: "address", numeric: false, disablePadding: false, label: "Address" },
-  { id: "status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "total", numeric: true, disablePadding: false, label: "Total" },
   {
-    id: "order_date",
+    id: "user_email",
+    numeric: false,
+    disablePadding: false,
+    label: "User Email",
+  },
+  { id: "content", numeric: false, disablePadding: false, label: "Content" },
+  { id: "point", numeric: true, disablePadding: false, label: "Point" },
+  {
+    id: "reply",
     numeric: true,
     disablePadding: false,
-    label: "Order Date",
+    label: "Number of replies",
   },
+  { id: "date", numeric: true, disablePadding: false, label: "Date" },
   { id: "action", numeric: true, disablePadding: false, label: "Action" },
 ];
 
@@ -202,9 +207,9 @@ const useToolbarStyles = makeStyles((theme) => ({
     transition: theme.transitions.create("width"),
     width: "12ch",
     [theme.breakpoints.up("sm")]: {
-      width: "12ch",
+      width: "250px",
       "&:focus": {
-        width: "20ch",
+        width: "300px",
       },
     },
   },
@@ -218,7 +223,7 @@ const EnhancedTableToolbar = (props) => {
   //Handle Delete
   const { numSelected, idSelected } = props;
   const handleDelete = () => {
-    dispatch(orderActions.delete(idSelected));
+    dispatch(reviewActions.delete(idSelected));
     props.setSelected([]);
   };
 
@@ -249,7 +254,7 @@ const EnhancedTableToolbar = (props) => {
             id="tableTitle"
             component="div"
           >
-            Orders
+            Reviews
           </Typography>
         </Hidden>
       )}
@@ -272,7 +277,8 @@ const EnhancedTableToolbar = (props) => {
                 <SearchIcon />
               </div>
               <InputBase
-                placeholder="Search…"
+                type="number"
+                placeholder="Search reviews with product ID"
                 classes={{
                   root: classes.inputRoot,
                   input: classes.inputInput,
@@ -291,11 +297,11 @@ const EnhancedTableToolbar = (props) => {
                 variant="contained"
                 color="primary"
                 startIcon={<AddIcon />}
-                to="/orders-add"
+                to="/reviews-add"
               >
                 Create
               </Button>
-            </Hidden>
+            </Hidden> */}
             <Hidden smUp>
               <IconButton
                 color="primary"
@@ -305,7 +311,7 @@ const EnhancedTableToolbar = (props) => {
               >
                 <AddIcon />
               </IconButton>
-            </Hidden> */}
+            </Hidden>
           </Grid>
           <Grid item>
             {/* <Tooltip title="Filter list">
@@ -387,29 +393,22 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "10px",
     color: "white",
     padding: theme.spacing(1),
-    textTransform: "capitalize",
   },
-  processing: {
-    backgroundColor: theme.palette.warning.main,
-  },
-  shipping: {
-    backgroundColor: theme.palette.info.main,
-  },
-  completed: {
+  available: {
     backgroundColor: theme.palette.success.main,
   },
-  cancelled: {
+  unavailable: {
     backgroundColor: theme.palette.error.main,
   },
 }));
 
-export default function OrderList() {
+export default function ReviewList() {
   //UI Hook
   const classes = useStyles();
 
   //Redux Hook
   const dispatch = useDispatch();
-  const orders = useSelector((state) => state.orders);
+  const reviews = useSelector((state) => state.reviews);
 
   //Table Hooks
   const [order, setOrder] = React.useState("asc");
@@ -427,7 +426,7 @@ export default function OrderList() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = orders.items.map((n) => n.id);
+      const newSelecteds = reviews.items.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -456,7 +455,17 @@ export default function OrderList() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    dispatch(orderActions.getAll(`?size=${rowsPerPage}&&page=${newPage + 1}`));
+    if (search === "")
+      dispatch(
+        reviewActions.getAll(`?size=${rowsPerPage}&&page=${newPage + 1}`)
+      );
+    else
+      dispatch(
+        reviewActions.getById(
+          search,
+          `?size=${rowsPerPage}&&page=${newPage + 1}`
+        )
+      );
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -468,7 +477,7 @@ export default function OrderList() {
 
   const emptyRows =
     rowsPerPage -
-      Math.min(rowsPerPage, orders.totalItems - page * rowsPerPage) || 0;
+      Math.min(rowsPerPage, reviews.totalItems - page * rowsPerPage) || 0;
 
   //Main functions
   //*Permission access
@@ -477,45 +486,24 @@ export default function OrderList() {
   const updatePermission = true;
   const deletePermission = true;
 
-  const [statusFilter, setStatusFilter] = useState("");
-  const [collapseFilter, setCollapseFilter] = useState(false);
+  //Load review with Filter and Search
 
-  const handleCollapseFilter = () => {
-    setCollapseFilter(!collapseFilter);
-  };
+  const [search, setSearch] = useState("");
 
-  //Load order with Filter
   useEffect(() => {
-    if (statusFilter !== "")
-      dispatch(
-        orderActions.getAll(
-          `?size=${rowsPerPage}&&page=${1}&&status=${statusFilter}`
-        )
-      );
-    else dispatch(orderActions.getAll(`?size=${rowsPerPage}&&page=${1}`));
-
+    dispatch(reviewActions.getAll(`?size=${rowsPerPage}&&page=${1}`));
     setPage(0);
-  }, [rowsPerPage, dispatch, statusFilter]);
-
-  //Chip function
-  const handleChipClick = (e) => {
-    // dispatch(
-    //   orderActions.getAll(
-    //     `?size=${rowsPerPage}&&page=${1}&&status=${e.currentTarget.id}`
-    //   )
-    // );
-    setStatusFilter(e.currentTarget.id);
-  };
+  }, [dispatch, rowsPerPage]);
 
   //*Search
-  const [search, setSearch] = useState("");
   //Handle Search
   const onSearch = () => {
-    dispatch(
-      orderActions.getAll(
-        `?search=${search}&limit=${rowsPerPage}&offset=0&active=${statusFilter}`
-      )
-    );
+    if (search === "")
+      dispatch(reviewActions.getAll(`?size=${rowsPerPage}&&page=${1}`));
+    else
+      dispatch(
+        reviewActions.getById(search, `?size=${rowsPerPage}&&page=${1}`)
+      );
     setPage(0);
   };
 
@@ -529,20 +517,20 @@ export default function OrderList() {
               Dashboard
             </Link>
 
-            <Typography color="textPrimary">Order List</Typography>
+            <Typography color="textPrimary">Review List</Typography>
           </Breadcrumbs>
 
           {/* Success & Error handling */}
-          {<CustomAlert loading={orders.loading} />}
-          {orders.error && (
+          {<CustomAlert loading={reviews.loading} />}
+          {reviews.error && (
             <CustomAlert
               openError={true}
-              messageError={orders.error}
+              messageError={reviews.error}
             ></CustomAlert>
           )}
-          {orders.success && <CustomAlert openSuccess={true}></CustomAlert>}
+          {reviews.success && <CustomAlert openSuccess={true}></CustomAlert>}
 
-          {/* Order table */}
+          {/* Review table */}
           <Paper className={classes.paper}>
             <EnhancedTableToolbar
               numSelected={selected.length}
@@ -552,11 +540,53 @@ export default function OrderList() {
               onSearch={onSearch}
               addPermission={addPermission}
               deletePermission={deletePermission}
-              handleCollapseFilter={handleCollapseFilter}
+              //handleCollapseFilter={handleCollapseFilter}
             />
 
+            {/* Filter collapse */}
+            {/* <Collapse in={collapseFilter}>
+              <Paper className={classes.marginY}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Autocomplete
+                      id="combo-box-category"
+                      fullWidth
+                      options={categoryListFilter}
+                      value={categoryFilter || null}
+                      onChange={(e, newValue) => setCategoryFilter(newValue)}
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Category"
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Autocomplete
+                      id="combo-box-brand"
+                      fullWidth
+                      options={brandListFilter}
+                      value={brandFilter || null}
+                      onChange={(e, newValue) => setBrandFilter(newValue)}
+                      getOptionLabel={(option) => option.name}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Brand"
+                          variant="outlined"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Collapse> */}
+
             {/* Filter Chip */}
-            <Grid
+            {/* <Grid
               style={{ marginLeft: 8, marginBottom: 16 }}
               container
               spacing={2}
@@ -572,39 +602,21 @@ export default function OrderList() {
 
               <Grid item>
                 <Chip
-                  color={
-                    statusFilter === "processing" ? "secondary" : "default"
-                  }
-                  id="processing"
-                  label="Processing"
+                  color={statusFilter === "true" ? "secondary" : "default"}
+                  id="true"
+                  label="Available"
                   onClick={(e) => handleChipClick(e)}
                 />
               </Grid>
               <Grid item>
                 <Chip
-                  color={statusFilter === "shipping" ? "secondary" : "default"}
-                  id="shipping"
-                  label="Shipping"
+                  color={statusFilter === "false" ? "secondary" : "default"}
+                  id="false"
+                  label="Unavailable"
                   onClick={(e) => handleChipClick(e)}
                 />
               </Grid>
-              <Grid item>
-                <Chip
-                  color={statusFilter === "completed" ? "secondary" : "default"}
-                  id="completed"
-                  label="Completed"
-                  onClick={(e) => handleChipClick(e)}
-                />
-              </Grid>
-              <Grid item>
-                <Chip
-                  color={statusFilter === "cancelled" ? "secondary" : "default"}
-                  id="cancelled"
-                  label="Cancelled"
-                  onClick={(e) => handleChipClick(e)}
-                />
-              </Grid>
-            </Grid>
+            </Grid> */}
 
             {/* Table Desktop version */}
             <Hidden smDown>
@@ -623,12 +635,12 @@ export default function OrderList() {
                     orderBy={orderBy}
                     onSelectAllClick={handleSelectAllClick}
                     onRequestSort={handleRequestSort}
-                    rowCount={orders.items.length}
+                    rowCount={reviews.items.length}
                   />
                   <TableBody>
-                    {orders.items.length > 0 &&
+                    {reviews.items.length > 0 &&
                       stableSort(
-                        orders.items,
+                        reviews.items,
                         getComparator(order, orderBy)
                       ).map((row, index) => {
                         const isItemSelected = isSelected(row.id);
@@ -651,8 +663,7 @@ export default function OrderList() {
                               />
                             </TableCell>
 
-                            <TableCell>{row.id}</TableCell>
-                            {/* <TableCell>{row.user_id}</TableCell>
+                            <TableCell>{row.id || ""}</TableCell>
                             <TableCell
                               style={{
                                 maxWidth: "10vw",
@@ -666,57 +677,62 @@ export default function OrderList() {
                                 <Tooltip
                                   title={
                                     <Typography variant="body2">
-                                      {row.user_id}
+                                      {(row.user && row.user.email) || ""}
                                     </Typography>
                                   }
                                 >
                                   <Typography variant="body2" noWrap>
-                                    {row.user_id}
+                                    {(row.user && row.user.email) || ""}
                                   </Typography>
                                 </Tooltip>
                               </Grid>
-                            </TableCell> */}
-                            <TableCell>
-                              <Typography
-                                display="inline"
-                                variant="body2"
-                                className={clsx({
-                                  [classes.status]: true,
-                                  [classes.processing]:
-                                    row.status === "processing",
-                                  [classes.shipping]: row.status === "shipping",
-                                  [classes.completed]:
-                                    row.status === "completed",
-                                  [classes.cancelled]:
-                                    row.status === "cancelled",
-                                })}
-                              >
-                                {row.status}
-                              </Typography>
                             </TableCell>
-
+                            <TableCell
+                              style={{
+                                maxWidth: "10vw",
+                                whiteSpace: "normal",
+                                wordWrap: "break-word",
+                              }}
+                              scope="row"
+                              padding="none"
+                            >
+                              <Grid item xs zeroMinWidth>
+                                <Tooltip
+                                  title={
+                                    <Typography variant="body2">
+                                      {row.content || ""}
+                                    </Typography>
+                                  }
+                                >
+                                  <Typography variant="body2" noWrap>
+                                    {row.content || ""}
+                                  </Typography>
+                                </Tooltip>
+                              </Grid>
+                            </TableCell>
+                            <TableCell align="right">{row.point}</TableCell>
                             <TableCell align="right">
-                              {row.total && row.total.toLocaleString()}
+                              {(row.replies && row.replies.length) || 0}
                             </TableCell>
-
                             <TableCell align="right">
                               <Typography variant="body2" display="block">
                                 {dateFormat(row.updated_at)}
+                              </Typography>
+                              <Typography
+                                color="textSecondary"
+                                variant="body2"
+                                display="block"
+                              >
+                                {dateFormat(row.inserted_at)}
                               </Typography>
                             </TableCell>
                             <TableCell align="right">
                               <Grid container justify="flex-end">
                                 <Grid item>
-                                  <Tooltip title="Edit" aria-label="edit">
-                                    <IconButton
-                                      component={Link}
-                                      disabled={!updatePermission}
-                                      to={`/orders-edit/${row.id}`}
-                                      aria-label="edit"
-                                    >
-                                      <EditIcon />
-                                    </IconButton>
-                                  </Tooltip>
+                                  <ReviewViewModal review={row} />
+                                </Grid>
+                                <Grid item>
+                                  <ReviewReplyModal review={row} />
                                 </Grid>
                               </Grid>
                             </TableCell>
@@ -734,20 +750,32 @@ export default function OrderList() {
             </Hidden>
             {/* Table Mobile version */}
             <Hidden mdUp>
-              {orders.items.map((row, index) => (
+              {reviews.items.map((row, index) => (
                 <Card
                   variant="outlined"
                   className={classes.cardRoot}
                   key={index}
                 >
                   <Grid container>
-                    <Grid item xs={10}>
+                    <Grid item xs={3} container alignItems="center">
+                      {/* <CardActionArea>
+                        <CardMedia
+                          //className={classes.cardMedia}
+                          component="img"
+                          src={
+                            (row.images.length > 0 && row.images[0].image) || ""
+                          }
+                          alt={"No data"}
+                        />
+                      </CardActionArea> */}
+                    </Grid>
+                    <Grid item xs={7}>
                       <CardContent className={classes.cardContent}>
-                        <Typography gutterBottom variant="h6" component="h2">
-                          Order ID: {row.id}
+                        {/* <Typography gutterBottom variant="h6" component="h2">
+                          {row.title}
                         </Typography>
                         <Typography variant="body1" component="p" gutterBottom>
-                          Total: {row.total && row.total.toLocaleString()}
+                          Price: {row.price}
                         </Typography>
                         <Typography
                           variant="body2"
@@ -755,22 +783,19 @@ export default function OrderList() {
                           component="p"
                           style={{ marginBottom: 10 }}
                         >
-                          Order date:{" "}
-                          {row.order_date && dateFormat(row.order_date)}
+                          Categories: {row.category.name}
                         </Typography>
                         <Typography
                           display="inline"
                           variant="body2"
                           className={clsx({
                             [classes.status]: true,
-                            [classes.processing]: row.status === "processing",
-                            [classes.shipping]: row.status === "shipping",
-                            [classes.completed]: row.status === "completed",
-                            [classes.cancelled]: row.status === "cancelled",
+                            [classes.available]: row.active,
+                            [classes.unavailable]: !row.active,
                           })}
                         >
-                          {row.status}
-                        </Typography>
+                          {row.active ? "Available" : "Unavailable"}
+                        </Typography> */}
                       </CardContent>
                     </Grid>
                     <Grid
@@ -780,12 +805,7 @@ export default function OrderList() {
                       justify="flex-end"
                       alignItems="flex-start"
                     >
-                      <IconButton
-                        component={Link}
-                        disabled={!updatePermission}
-                        to={`/orders-edit/${row.id}`}
-                        aria-label="edit"
-                      >
+                      <IconButton aria-label="edit">
                         <EditIcon />
                       </IconButton>
                     </Grid>
@@ -797,7 +817,7 @@ export default function OrderList() {
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
               component="div"
-              count={orders.totalItems || 0}
+              count={reviews.totalItems || 0}
               rowsPerPage={rowsPerPage}
               labelRowsPerPage={"Rows:"}
               page={page}
