@@ -5,6 +5,7 @@ import { categories } from "./category.reducers";
 import { brands } from "./brand.reducers";
 import { vouchers } from "./voucher.reducers";
 import { orders } from "./order.reducers";
+import { reviews } from "./review.reducers";
 
 //Theme
 import { themeConstants } from "../constants";
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   brands,
   vouchers,
   orders,
+  reviews,
 });
 
 export default rootReducer;

@@ -8,7 +8,7 @@ import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import DashboardIcon from "@material-ui/icons/Dashboard";
-import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+//import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import LaptopIcon from "@material-ui/icons/Laptop";
 import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
 import LocalMallIcon from "@material-ui/icons/LocalMall";
@@ -21,9 +21,10 @@ import StoreIcon from "@material-ui/icons/Store";
 //import CategoryIcon from "@material-ui/icons/Category";
 import SettingsIcon from "@material-ui/icons/Settings";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import AccountTreeIcon from "@material-ui/icons/AccountTree";
+//import AccountTreeIcon from "@material-ui/icons/AccountTree";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
+import RateReviewIcon from "@material-ui/icons/RateReview";
 // import LocationCityIcon from "@material-ui/icons/LocationCity";
 // import StreetviewIcon from "@material-ui/icons/Streetview";
 import LocalOfferIcon from "@material-ui/icons/LocalOffer";
@@ -242,6 +243,27 @@ export default function MainListItems(props) {
             </ListItem>
           </Tooltip>
         </List>
+        <List component="div" disablePadding>
+          <Tooltip
+            disableFocusListener
+            disableTouchListener
+            arrow
+            placement="right"
+            title={<Typography variant="body2">Reviews</Typography>}
+          >
+            <ListItem
+              className={classes.nested}
+              button
+              component={Link}
+              to="/reviews"
+            >
+              <ListItemIcon>
+                <RateReviewIcon />
+              </ListItemIcon>
+              <ListItemText primary="Reviews" />
+            </ListItem>
+          </Tooltip>
+        </List>
         {/* <List component="div" disablePadding>
           <Tooltip
             disableFocusListener
@@ -266,7 +288,7 @@ export default function MainListItems(props) {
       </Collapse>
 
       {/* Admin Menu List*/}
-      <Tooltip
+      {/* <Tooltip
         disableFocusListener
         disableTouchListener
         arrow
@@ -305,7 +327,7 @@ export default function MainListItems(props) {
             </ListItem>
           </Tooltip>
         </List>
-      </Collapse>
+      </Collapse> */}
 
       {/* Setting */}
       <Tooltip

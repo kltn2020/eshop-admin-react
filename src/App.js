@@ -19,6 +19,8 @@ import VoucherList from "./containers/Voucher/VoucherList";
 //>>Order
 import OrderList from "./containers/Order/OrderList";
 import OrderEdit from "./containers/Order/OrderEdit";
+//>>Review
+import ReviewList from "./containers/Review/ReviewList";
 
 //Redux
 import { useSelector } from "react-redux";
@@ -73,7 +75,12 @@ const App = () => {
               path="/orders-edit/:id"
               component={OrderEdit}
             ></AdminRoute>
-
+            {/* Review */}
+            <AdminRoute
+              exact
+              path="/reviews"
+              component={ReviewList}
+            ></AdminRoute>
             <AdminRoute exact path="/setting" component={Setting}></AdminRoute>
           </Switch>
         </Router>

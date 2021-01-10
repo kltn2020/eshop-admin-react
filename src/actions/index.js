@@ -7,6 +7,7 @@ export * from "./product.actions";
 export * from "./brand.actions";
 export * from "./voucher.actions";
 export * from "./order.actions";
+export * from "./review.actions";
 
 //Theme
 export const themeActions = {
