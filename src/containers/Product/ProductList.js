@@ -70,7 +70,7 @@ const headCells = [
     label: "Brands",
   },
   { id: "status", numeric: false, disablePadding: false, label: "Status" },
-  { id: "date", numeric: true, disablePadding: false, label: "Date" },
+  // { id: "date", numeric: true, disablePadding: false, label: "Date" },
   { id: "action", numeric: true, disablePadding: false, label: "Action" },
 ];
 
@@ -465,7 +465,7 @@ export default function ProductList() {
     setPage(newPage);
     dispatch(
       productActions.getAll(
-        `?size=${rowsPerPage}&&page=${newPage + 1}${
+        `?page=${newPage + 1}${
           categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
         }${
           brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``
@@ -530,7 +530,7 @@ export default function ProductList() {
   useEffect(() => {
     dispatch(
       productActions.getAll(
-        `?size=${rowsPerPage}&&page=${1}${
+        `?page=${1}${
           categoryFilter.id > 0 ? `&&category_id=${categoryFilter.id}` : ``
         }${brandFilter.id > 0 ? `&&brand_id=${brandFilter.id}` : ``}${
           statusFilter !== "" ? `&&is_available=${statusFilter}` : ""
@@ -789,7 +789,7 @@ export default function ProductList() {
                                 {row.is_available ? "Available" : "Unavailable"}
                               </Typography>
                             </TableCell>
-                            <TableCell align="right">
+                            {/* <TableCell align="right">
                               <Typography variant="body2" display="block">
                                 {dateFormat(row.updated_at)}
                               </Typography>
@@ -800,7 +800,7 @@ export default function ProductList() {
                               >
                                 {dateFormat(row.inserted_at)}
                               </Typography>
-                            </TableCell>
+                            </TableCell> */}
                             <TableCell align="right">
                               <Grid container justify="flex-end">
                                 <Grid item>

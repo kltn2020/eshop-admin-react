@@ -29,7 +29,7 @@ import { history } from "../store";
 import AdminLayout from "../components/Layout";
 //>>Charts
 import OrdersChart from "../components/Charts/OrdersChart";
-import UsersChart from "../components/Charts/UsersChart";
+import ReviewsChart from "../components/Charts/ReviewsChart";
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
@@ -192,9 +192,9 @@ export default function Dashboard() {
     setOpenOrderChartCollapse(!openOrderChartCollapse);
   };
 
-  const [openUserChartCollapse, setOpenUserChartCollapse] = useState(true);
-  const handleUserChartCollapse = () => {
-    setOpenUserChartCollapse(!openUserChartCollapse);
+  const [openReviewChartCollapse, setOpenReviewChartCollapse] = useState(true);
+  const handleReviewChartCollapse = () => {
+    setOpenReviewChartCollapse(!openReviewChartCollapse);
   };
 
   const [openLastestOrderCollapse, setOpenLastestOrderCollapse] = useState(
@@ -332,17 +332,17 @@ export default function Dashboard() {
                 </Collapse>
               </Grid>
 
-              {/* User chart */}
+              {/* Review chart */}
               <Grid item xs={12} sm={12} md={6}>
                 <ButtonBase
                   className={classes.sectionBtn}
-                  onClick={handleUserChartCollapse}
+                  onClick={handleReviewChartCollapse}
                 >
-                  <Typography variant="h6">New Users past 7 days</Typography>
-                  {openUserChartCollapse ? <ExpandLess /> : <ExpandMore />}
+                  <Typography variant="h6">New Reviews past 7 days</Typography>
+                  {openReviewChartCollapse ? <ExpandLess /> : <ExpandMore />}
                 </ButtonBase>
                 <Collapse
-                  in={openUserChartCollapse}
+                  in={openReviewChartCollapse}
                   timeout="auto"
                   unmountOnExit
                 >
@@ -351,7 +351,7 @@ export default function Dashboard() {
                     style={{ height: 300 }}
                     elevation={4}
                   >
-                    {/* <UsersChart /> */}
+                    <ReviewsChart />
                   </Paper>
                 </Collapse>
               </Grid>
@@ -396,7 +396,7 @@ export default function Dashboard() {
                           <TableRow>
                             <TableCell>Order ID</TableCell>
                             <TableCell>Order status</TableCell>
-                            <TableCell>User</TableCell>
+                            <TableCell>Review</TableCell>
                             <TableCell align="right">Amount</TableCell>
                             <TableCell align="right">Create at</TableCell>
                             <TableCell align="right">Action</TableCell>

@@ -16,8 +16,8 @@ function getAll(url) {
     dispatch(request());
     await voucherService.getAll(url).then(
       (vouchers) => {
-        dispatch(success(vouchers));
         history.replace({ pathname: history.location.pathname, state: 200 });
+        dispatch(success(vouchers));
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -96,8 +96,8 @@ function add(voucher) {
 
     await voucherService.add(voucher).then(
       (voucher) => {
+        history.replace({ pathname: "/vouchers", state: 201 });
         dispatch(success(voucher));
-        history.push({ pathname: "/vouchers", state: 201 });
       },
       (error) => {
         dispatch(failure(error));
@@ -121,8 +121,8 @@ function update(id, voucher) {
     dispatch(request(voucher));
     await voucherService.update(id, voucher).then(
       (voucher) => {
+        history.replace({ pathname: "/vouchers", state: 202 });
         dispatch(success(voucher));
-        history.push({ pathname: "/vouchers", state: 202 });
       },
       (error) => {
         dispatch(failure(error));
@@ -147,8 +147,8 @@ function _delete(id) {
     dispatch(request(id));
     await voucherService.delete(id).then(
       () => {
-        dispatch(success(id));
         history.replace({ pathname: "/vouchers", state: 203 });
+        dispatch(success(id));
       },
       (error) => {
         dispatch(failure(error));

@@ -13,25 +13,24 @@ import {
 
 //Redux
 import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../../actions";
 
-export default function UsersChart() {
+export default function ReviewsChart() {
   const theme = useTheme();
 
   //Redux
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.users);
+  const reviews = useSelector((state) => state.reviews);
 
-  //>>Load all users
+  //>>Load all reviews
   useEffect(() => {
-    //dispatch(userActions.getAll(`?limit=500`));
+    //dispatch(reviewActions.getAll(`?limit=500`));
   }, [dispatch]);
 
-  //User chart Data
-  const [userData, setUserData] = useState([]);
+  //Review chart Data
+  const [reviewData, setReviewData] = useState([]);
 
   useEffect(() => {
-    if (users.items && users.items.length > 0) {
+    if (reviews.items && reviews.items.length > 0) {
       //Functions get past 7 days
       const dates = [...Array(7)].map((_, i) => {
         const d = new Date();
@@ -40,41 +39,41 @@ export default function UsersChart() {
         return d;
       });
 
-      //Funtion to get date outside user and format it
-      const pyDates = [...users.items].map((user, index) => {
-        const d = new Date(user.created_at);
+      //Funtion to get date outside review and format it
+      const pyDates = [...reviews.items].map((review, index) => {
+        const d = new Date(review.review_date);
         d.setUTCHours(0, 0, 0, 0);
 
-        return { date: d, user: user };
+        return { date: d, review: review };
       });
 
       //Function to compare and count
       //1.Create new array
-      //2.Map past 7 days, if user day = 1 day in this array, count +1
+      //2.Map past 7 days, if review day = 1 day in this array, count +1
       //3.Push data of day to newArray
-      //4.When run through 7 days complete, setUserData for chart with newArray
+      //4.When run through 7 days complete, setReviewData for chart with newArray
       let newArray = [];
       dates.map((day) => {
         let count = 0;
-        pyDates.map((userDay) => {
-          if (userDay.date.getTime() === day.getTime()) {
+        pyDates.map((reviewDay) => {
+          if (reviewDay.date.getTime() === day.getTime()) {
             return count++;
           } else return count;
         });
         return newArray.push({
           day: day.toLocaleDateString(),
-          newUser: count,
+          numberOfReviews: count,
         });
       });
-      setUserData(newArray.reverse());
+      setReviewData(newArray.reverse());
     }
-  }, [users.items]);
+  }, [reviews.items]);
 
   return (
     <React.Fragment>
       <ResponsiveContainer>
         <AreaChart
-          data={userData}
+          data={reviewData}
           margin={{
             top: 16,
             right: 16,
@@ -83,7 +82,7 @@ export default function UsersChart() {
           }}
         >
           <defs>
-            <linearGradient id="colorUser" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="colorReview" x1="0" y1="0" x2="0" y2="1">
               <stop
                 offset="5%"
                 stopColor={theme.palette.primary.main}
@@ -103,7 +102,7 @@ export default function UsersChart() {
               position="left"
               style={{ textAnchor: "middle", fill: theme.palette.text.primary }}
             >
-              New Users
+              New Reviews
             </Label>
           </YAxis>
           <Tooltip />
@@ -111,10 +110,10 @@ export default function UsersChart() {
 
           <Area
             type="monotone"
-            dataKey="newUser"
+            dataKey="numberOfReviews"
             stroke={theme.palette.primary.main}
             fillOpacity={1}
-            fill="url(#colorUser)"
+            fill="url(#colorReview)"
           />
         </AreaChart>
       </ResponsiveContainer>

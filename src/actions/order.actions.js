@@ -16,8 +16,8 @@ function getAll(url) {
     dispatch(request());
     await orderService.getAll(url).then(
       (orders) => {
-        dispatch(success(orders));
         history.replace({ pathname: history.location.pathname, state: 200 });
+        dispatch(success(orders));
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -112,8 +112,8 @@ function add(order, image) {
 
     await orderService.add(order, image).then(
       (order) => {
-        dispatch(success(order));
         history.push({ pathname: "/orders", state: 201 });
+        dispatch(success(order));
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -145,8 +145,8 @@ function update(id, order, image, delImageId) {
     dispatch(request(order));
     await orderService.update(id, order, image, delImageId).then(
       (order) => {
-        dispatch(success(id));
         history.push({ pathname: "/orders", state: 202 });
+        dispatch(success(id));
       },
       (error) => {
         dispatch(failure(error));
@@ -171,8 +171,8 @@ function _delete(id) {
     dispatch(request(id));
     await orderService.delete(id).then(
       () => {
-        dispatch(success(id));
         history.replace({ pathname: "/orders", state: 203 });
+        dispatch(success(id));
       },
       (error) => {
         dispatch(failure(error));

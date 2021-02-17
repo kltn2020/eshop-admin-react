@@ -46,9 +46,8 @@ function login(user) {
 
     await userService.login(user).then(
       (data) => {
-        dispatch(success(data));
-
         history.push({ pathname: "/", state: 200 });
+        dispatch(success(data));
       },
       (error) => {
         dispatch(failure(error));
@@ -80,7 +79,7 @@ function register(user) {
     await userService.register(user).then(
       (token) => {
         dispatch(success(token));
-        history.push({ pathname: "/", state: 200 });
+        history.replace({ pathname: "/", state: 200 });
       },
       (error) => {
         dispatch(failure(error));
@@ -105,8 +104,8 @@ function add(user) {
 
     await userService.add(user).then(
       (user) => {
+        history.replace({ pathname: "/users", state: 201 });
         dispatch(success(user));
-        history.push({ pathname: "/users", state: 201 });
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -221,9 +220,8 @@ function update(id, user, user_permissions) {
     dispatch(request(id));
     await userService.update(id, user, user_permissions).then(
       (id) => {
+        history.replace({ pathname: "/users", state: 202 });
         dispatch(success(id));
-
-        history.push({ pathname: "/users", state: 202 });
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -257,8 +255,8 @@ function _delete(id) {
 
     await userService.delete(id).then(
       async (id) => {
-        dispatch(success(id));
         history.replace({ pathname: "/users", state: 203 });
+        dispatch(success(id));
         await dispatch(getAll());
       },
       (error) => {

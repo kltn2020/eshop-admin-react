@@ -112,8 +112,8 @@ function add(product, image) {
 
     await productService.add(product, image).then(
       (product) => {
+        history.replace({ pathname: "/products", state: 201 });
         dispatch(success(product));
-        history.push({ pathname: "/products", state: 201 });
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -145,8 +145,8 @@ function update(id, product, image, delImageId) {
     dispatch(request(product));
     await productService.update(id, product, image, delImageId).then(
       (product) => {
+        history.replace({ pathname: "/products", state: 202 });
         dispatch(success(id));
-        history.push({ pathname: "/products", state: 202 });
       },
       (error) => {
         dispatch(failure(error));
@@ -171,8 +171,8 @@ function _delete(id) {
     dispatch(request(id));
     await productService.delete(id).then(
       () => {
-        dispatch(success(id));
         history.replace({ pathname: "/products", state: 203 });
+        dispatch(success(id));
       },
       (error) => {
         dispatch(failure(error));

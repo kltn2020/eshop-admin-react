@@ -14,8 +14,8 @@ function getAll(url) {
     dispatch(request());
     await reviewService.getAll(url).then(
       (reviews) => {
-        dispatch(success(reviews));
         history.replace({ pathname: history.location.pathname, state: 200 });
+        dispatch(success(reviews));
       },
       (error) => {
         if (error.response && error.response.data) {
@@ -80,8 +80,8 @@ function reply(reply) {
 
     await reviewService.reply(reply).then(
       (reply) => {
+        history.replace({ pathname: "/reviews", state: 201 });
         dispatch(success(reply));
-        history.push({ pathname: "/reviews", state: 201 });
       },
       (error) => {
         dispatch(failure(error));
@@ -106,8 +106,8 @@ function _delete(id) {
     dispatch(request(id));
     await reviewService.delete(id).then(
       () => {
-        dispatch(success(id));
         history.replace({ pathname: "/reviews", state: 203 });
+        dispatch(success(id));
       },
       (error) => {
         dispatch(failure(error));

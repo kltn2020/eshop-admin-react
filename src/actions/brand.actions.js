@@ -11,8 +11,8 @@ function getAll(url) {
     dispatch(request());
     await brandService.getAll(url).then(
       (brands) => {
-        dispatch(success(brands));
         history.replace({ pathname: history.location.pathname, state: 200 });
+        dispatch(success(brands));
       },
       (error) => {
         dispatch(failure(error));

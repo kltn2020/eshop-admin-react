@@ -5,6 +5,7 @@ export * from "./brand.constants";
 export * from "./voucher.constants";
 export * from "./order.constants";
 export * from "./review.constants";
+export * from "./setting.constants";
 
 //Theme
 export const themeConstants = { CHANGE_THEME: "CHANGE_THEME" };
